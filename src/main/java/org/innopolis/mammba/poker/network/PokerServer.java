@@ -2,11 +2,10 @@ package org.innopolis.mammba.poker.network;
 
 import com.corundumstudio.socketio.listener.*;
 import com.corundumstudio.socketio.*;
+import org.innopolis.mammba.poker.game.*;
 import org.innopolis.mammba.poker.network.messages.StateUpdateMessage;
-import org.innopolis.mammba.poker.game.Player;
-import org.innopolis.mammba.poker.game.Room;
-import org.innopolis.mammba.poker.game.User;
 import org.innopolis.mammba.poker.network.messages.TableStateUpdateMessage;
+import org.innopolis.mammba.poker.network.messages.data.TableStateData;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -58,6 +57,43 @@ public class PokerServer {
     private void addEventListeners() {
         server.addConnectListener(new ConnectListener() {
             public void onConnect(SocketIOClient client) {
+                TableStateUpdateMessage tsum = new TableStateUpdateMessage();
+                TableStateData tsd = new TableStateData();
+
+                String[] actions = {"fold", "check"};
+                Card[]   playerCards = new Card[2];
+                playerCards[0] = new Card(Card.Suit.Hearts, Card.Rank.Ace);
+                playerCards[1] = new Card(Card.Suit.Diamonds, Card.Rank.Ace);
+
+                Card[]   tableCards = new Card[3];
+                playerCards[0] = new Card(Card.Suit.Spades, Card.Rank.Eight);
+                playerCards[1] = new Card(Card.Suit.Clubs, Card.Rank.Jack);
+                playerCards[0] = new Card(Card.Suit.Spades, Card.Rank.Nine);
+
+                TableStateData.Player[] players = new TableStateData.Player[2];
+                players[0] = tsd.new Player();
+                players[1] = tsd.new Player();
+
+                players[0].setID("id1");
+                players[0].setName("Mike");
+                players[0].setStake(100);
+                players[0].setTurn(true);
+
+                players[1].setID("id2");
+                players[1].setName("Bulat");
+                players[1].setStake(300);
+                players[1].setTurn(false);
+
+                tsd.setActionList(actions);
+                tsd.setOverallStakes(1000);
+                tsd.setPlayerCards(playerCards);
+                tsd.setTableCards(tableCards);
+                tsd.setPlayers(players);
+
+                tsum.setData(tsd);
+
+                client.sendEvent("su", tsum);
+
                 User pk = new User(client);
                 users.put(client.getSessionId(), pk);
                 // For the basic version we'll use only one room

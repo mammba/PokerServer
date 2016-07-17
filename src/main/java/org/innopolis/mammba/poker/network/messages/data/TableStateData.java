@@ -3,11 +3,11 @@ package org.innopolis.mammba.poker.network.messages.data;
 import org.innopolis.mammba.poker.game.Card;
 
 public class TableStateData extends AbstractMessageData {
-    TableStateData() {
+    public TableStateData() {
         super(MessageDataType.TABLE_STATE);
     }
 
-    // Public data (availible to every user
+    // Public data (availible to every user)
     private Card[]   tableCards;
     private int      overallStakes;
     private Player[] players;
@@ -17,6 +17,7 @@ public class TableStateData extends AbstractMessageData {
     private String[] actionList;
 
     public class Player {
+        public Player() {}
         private String  name;
         private String  id;
         private int     stake;

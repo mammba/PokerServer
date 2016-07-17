@@ -34,15 +34,16 @@ public class Card {
         return i;
     }
 
+    public enum Suit {
+        Hearts, Diamonds, Spades, Clubs;
+    }
+
+    public enum Rank {
+        Six, Seven, Eight, Nine, Ten, Jack, Queen, King, Ace;
+    }
+
     public String getNotation() {
         return suit.toString() + rank.toString();
     }
 }
 
-enum Suit {
-    Hearts, Diamonds, Spades, Clubs;
-}
-
-enum Rank {
-    Six, Seven, Eight, Nine, Ten, Jack, Queen, King, Ace;
-}
