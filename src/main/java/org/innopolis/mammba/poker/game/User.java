@@ -41,6 +41,6 @@ public class User {
         this.money = money;
     }
     public void updateData(List<Card> myCards, List<Card> openedCards, List<Stake> stakes) {
-        client.sendEvent("du", new StateUpdateMessage(myCards, openedCards, stakes));
+        //client.sendEvent("du", new StateUpdateMessage(myCards, openedCards, stakes));
     }
 }

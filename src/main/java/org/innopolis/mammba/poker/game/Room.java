@@ -40,9 +40,9 @@ public class Room {
     public void notifySpectators() {
         for(Spectator sp:users) {
             List<Card> myCards = game.getMyCards(sp);
-            List<Card> openedCards = game.getOpenedCards(sp);
-            List<Stake> stakes = game.getPlayersStakes(sp);
-            sp.notifySpectator(myCards, openedCards, stakes);
+            List<Card> openedCards = game.getTableCards(sp);
+            //List<Stake> stakes = game.getPlayersStakes(sp);
+            //sp.notifySpectator(myCards, openedCards, stakes);
         }
     }
 }

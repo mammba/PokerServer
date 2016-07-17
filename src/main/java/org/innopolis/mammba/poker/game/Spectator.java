@@ -12,7 +12,7 @@ public class Spectator {
     public User getUser() {
         return user;
     }
-    public void notifySpectator(List<Card> myCards, List<Card> openedCards, List<Stakes> stakes) {
-        user.updateData(cards, openedCards, stakes);
+    public void notifySpectator(List<Card> myCards, List<Card> openedCards, List<Stake> stakes) {
+        //user.updateData(cards, openedCards, stakes);
     }
 }
