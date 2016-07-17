@@ -10,7 +10,7 @@ public class ChatLauncher {
         Configuration config = new Configuration();
         config.setHostname("localhost");
         config.setPort(8080);
-        config.setOrigin("http://localhost");
+        //config.setOrigin("http://localhost");
 
         final SocketIOServer server = new SocketIOServer(config);
 
