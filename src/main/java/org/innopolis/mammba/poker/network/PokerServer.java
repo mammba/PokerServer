@@ -2,14 +2,22 @@ package org.innopolis.mammba.poker.network;
 
 import com.corundumstudio.socketio.listener.*;
 import com.corundumstudio.socketio.*;
+import org.innopolis.mammba.poker.game.Room;
+import org.innopolis.mammba.poker.game.Spectator;
 import org.innopolis.mammba.poker.game.User;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.UUID;
 
 public class PokerServer {
     private SocketIOServer server;
-    private HashMap<UUID, User> users;
+    private HashMap<UUID, User> users = new HashMap<UUID, User>();
+    private List<Room> rooms = new LinkedList<Room>();
     public PokerServer(int port) {
+        // For the basic version we'll use only one room
+        rooms.add(new Room());
+
         Configuration config = new Configuration();
         config.setHostname("localhost");
         config.setPort(port);
@@ -49,10 +57,16 @@ public class PokerServer {
             public void onConnect(SocketIOClient client) {
                 User pk = new User();
                 users.put(client.getSessionId(), pk);
+                // For the basic version we'll use only one room
+                rooms.get(0).addUser(new Spectator(pk, rooms.get(0)));
             }
         });
         server.addDisconnectListener(new DisconnectListener() {
             public void onDisconnect(SocketIOClient client) {
+                User user = getUserBySessionID(client.getSessionId());
+                // For the basic version we'll use only one room
+                // rooms.get(0).removeUser();
+                // TODO: remove user from the room
                 users.remove(client.getSessionId());
             }
         });
