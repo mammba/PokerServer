@@ -2,8 +2,8 @@ package org.innopolis.mammba.poker.network;
 
 import com.corundumstudio.socketio.listener.*;
 import com.corundumstudio.socketio.*;
+import org.innopolis.mammba.poker.game.Player;
 import org.innopolis.mammba.poker.game.Room;
-import org.innopolis.mammba.poker.game.Spectator;
 import org.innopolis.mammba.poker.game.User;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -55,10 +55,10 @@ public class PokerServer {
     private void addEventListeners() {
         server.addConnectListener(new ConnectListener() {
             public void onConnect(SocketIOClient client) {
-                User pk = new User();
+                User pk = new User(client);
                 users.put(client.getSessionId(), pk);
                 // For the basic version we'll use only one room
-                rooms.get(0).addUser(new Spectator(pk, rooms.get(0)));
+                rooms.get(0).addPlayer(new Player(pk, rooms.get(0)));
             }
         });
         server.addDisconnectListener(new DisconnectListener() {
@@ -66,7 +66,7 @@ public class PokerServer {
                 User user = getUserBySessionID(client.getSessionId());
                 // For the basic version we'll use only one room
                 // rooms.get(0).removeUser();
-                // TODO: remove user from the room
+                rooms.get(0).removeUser(user);
                 users.remove(client.getSessionId());
             }
         });
@@ -74,6 +74,7 @@ public class PokerServer {
         server.addEventListener("su", StateUpdateMessage.class, new DataListener<StateUpdateMessage>() {
             public void onData(SocketIOClient client, StateUpdateMessage data, AckRequest ackRequest) {
                 User user = getUserBySessionID(client.getSessionId());
+                // For 0.0.1 this will just call rooms.get(0).game().* methods
             }
         });
     }
