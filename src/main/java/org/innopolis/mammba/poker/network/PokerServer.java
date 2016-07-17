@@ -2,6 +2,7 @@ package org.innopolis.mammba.poker.network;
 
 import com.corundumstudio.socketio.listener.*;
 import com.corundumstudio.socketio.*;
+import org.innopolis.mammba.poker.network.messages.StateUpdateMessage;
 
 public class PokerServer {
     private SocketIOServer server;
