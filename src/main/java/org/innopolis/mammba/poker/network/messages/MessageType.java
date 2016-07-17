@@ -1,7 +1,7 @@
 package org.innopolis.mammba.poker.network.messages;
 
 public class MessageType {
-    final static String STATE_UPDATE = "su";
-    final static String DATA_REQUEST = "get";
-    final static String AUTH = "auth";
+    public static final String STATE_UPDATE = "su";
+    public static final String DATA_REQUEST = "get";
+    public static final String AUTH = "auth";
 }

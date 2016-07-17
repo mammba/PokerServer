@@ -4,6 +4,8 @@ import com.corundumstudio.socketio.listener.*;
 import com.corundumstudio.socketio.*;
 import org.innopolis.mammba.poker.network.messages.StateUpdateMessage;
 import org.innopolis.mammba.poker.game.User;
+import org.innopolis.mammba.poker.network.messages.TableStateUpdateMessage;
+
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -64,4 +66,5 @@ public class PokerServer {
             }
         });
     }
+
 }
