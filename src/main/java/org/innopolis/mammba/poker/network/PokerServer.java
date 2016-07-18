@@ -121,6 +121,43 @@ public class PokerServer {
             public void onData(SocketIOClient client, StateUpdateMessage data, AckRequest ackRequest) {
                 User user = getUserBySessionID(client.getSessionId());
                 // For 0.0.1 this will just call rooms.get(0).game().* methods
+
+                TableStateUpdateMessage tsum = new TableStateUpdateMessage();
+                TableStateData tsd = new TableStateData();
+
+                String[] actions = {"fold", "check"};
+                Card[]   playerCards = new Card[2];
+                playerCards[0] = new Card(Card.Suit.Hearts, Card.Rank.Ace);
+                playerCards[1] = new Card(Card.Suit.Diamonds, Card.Rank.Ace);
+
+                Card[]   tableCards = new Card[3];
+                tableCards[0] = new Card(Card.Suit.Spades, Card.Rank.Eight);
+                tableCards[1] = new Card(Card.Suit.Clubs, Card.Rank.Jack);
+                tableCards[2] = new Card(Card.Suit.Spades, Card.Rank.Nine);
+
+                TableStateData.Player[] players = new TableStateData.Player[2];
+                players[0] = tsd.new Player();
+                players[1] = tsd.new Player();
+
+                players[0].setID("id1");
+                players[0].setName("Mike");
+                players[0].setStake(100);
+                players[0].setTurn(true);
+
+                players[1].setID("id2");
+                players[1].setName("Bulat");
+                players[1].setStake(300);
+                players[1].setTurn(false);
+
+                tsd.setActionList(actions);
+                tsd.setOverallStakes(1000);
+                tsd.setPlayerCards(playerCards);
+                tsd.setTableCards(tableCards);
+                tsd.setPlayers(players);
+
+                tsum.setData(tsd);
+
+                client.sendEvent("su", tsum);
             }
         });
     }
