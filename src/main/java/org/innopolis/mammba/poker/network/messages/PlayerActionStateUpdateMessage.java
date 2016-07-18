@@ -1,12 +1,10 @@
 package org.innopolis.mammba.poker.network.messages;
 
+import org.innopolis.mammba.poker.network.messages.data.PlayerActionData;
+
 public class PlayerActionStateUpdateMessage extends StateUpdateMessage {
-    private String action;
-    private int    stake;
+    private PlayerActionData data;
 
-    public String getAction() { return action; }
-    public int    getStake()  { return stake;  }
-
-    public void setAction(String action) { this.action = action; }
-    public void setStake(int stake)      { this.stake = stake;   }
+    public PlayerActionData getData()                      { return data; }
+    public void             setData(PlayerActionData data) { this.data = data; }
 }
