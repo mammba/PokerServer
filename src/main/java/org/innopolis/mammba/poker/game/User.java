@@ -1,6 +1,7 @@
 package org.innopolis.mammba.poker.game;
 
 import com.corundumstudio.socketio.SocketIOClient;
+import org.innopolis.mammba.poker.network.messages.MessageType;
 import org.innopolis.mammba.poker.network.messages.TableStateUpdateMessage;
 import org.innopolis.mammba.poker.network.messages.data.TableStateData;
 
@@ -69,6 +70,6 @@ public class User {
 
         tsum.setData(tsd);
 
-        client.sendEvent("su", tsum);
+        client.sendEvent(MessageType.STATE_UPDATE, tsum);
     }
 }
