@@ -1,17 +1,14 @@
 package org.innopolis.mammba.poker.network.messages.data;
 
 public class AbstractMessageData {
-    private final String dataType;
+    private final MessageDataType dataType;
 
-    AbstractMessageData(String dataType) {
+    AbstractMessageData(MessageDataType dataType) {
         this.dataType = dataType;
     }
 
     public String getDataType() {
-        return dataType;
+        return dataType.toString();
     }
-
-    public void setDataType() {
-
-    }
+    public void setDataType() { }
 }

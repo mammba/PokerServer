@@ -1,9 +1,9 @@
 package org.innopolis.mammba.poker.network.messages;
-import org.innopolis.mammba.poker.network.messages.data.MessageDataType;
+import org.innopolis.mammba.poker.network.messages.data.DataRequestData;
 
 public class DataRequestMessage extends AbstractMessage {
-    private MessageDataType data;
+    private DataRequestData data;
 
-    public MessageDataType getData()          { return data;}
-    public void setData(MessageDataType data) { this.data = data; }
+    public DataRequestData getData()          { return data;}
+    public void setData(DataRequestData data) { this.data = data; }
 }

@@ -6,8 +6,8 @@ package org.innopolis.mammba.poker.network.messages.data;
 public class DataRequestData extends AbstractMessageData {
     public DataRequestData() { super(MessageDataType.DATA_REQUEST); }
 
-    private String requestDataType;
+    private MessageDataType requestDataType;
 
-    public String getRequestDataType()                       { return requestDataType; }
-    public void   setRequestDataType(String requestDataType) { this.requestDataType = requestDataType; }
+    public String getRequestDataType()                     { return requestDataType.toString(); }
+    public void setRequestDataType(String requestDataType) { this.requestDataType = MessageDataType.valueOf(requestDataType); }
 }
