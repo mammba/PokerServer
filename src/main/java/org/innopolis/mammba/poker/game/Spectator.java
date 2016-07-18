@@ -1,6 +1,7 @@
 package org.innopolis.mammba.poker.game;
 
 import java.util.List;
+import  java.util.UUID;
 
 public class Spectator {
     private User user;
@@ -12,7 +13,13 @@ public class Spectator {
     public User getUser() {
         return user;
     }
-    public void notifySpectator(List<Card> myCards, List<Card> openedCards, List<Stake> stakes) {
-        //user.updateData(cards, openedCards, stakes);
+    public void notifySpectator() {
+        user.updateData(room, this);
+    }
+    public UUID getUUID() {
+        return user.getUUID();
+    }
+    public String getNickname() {
+        return user.getNickname();
     }
 }

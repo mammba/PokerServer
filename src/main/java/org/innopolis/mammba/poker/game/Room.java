@@ -37,12 +37,12 @@ public class Room {
                 this.users.remove(sp);
             }
     }
+    public Game getGame() {
+        return game;
+    }
     public void notifySpectators() {
         for(Spectator sp:users) {
-            List<Card> myCards = game.getMyCards(sp);
-            List<Card> openedCards = game.getTableCards(sp);
-            //List<Stake> stakes = game.getPlayersStakes(sp);
-            //sp.notifySpectator(myCards, openedCards, stakes);
+            sp.notifySpectator();
         }
     }
 }
