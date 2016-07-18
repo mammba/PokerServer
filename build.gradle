@@ -14,6 +14,9 @@ dependencies {
     compile group: 'com.corundumstudio.socketio', name: 'netty-socketio', version: '1.7.11'
 }
 
-task run() {
+apply plugin: 'application'
+mainClassName = "org.innopolis.mammba.poker.Main"
+
+run {
 
 }
