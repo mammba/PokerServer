@@ -66,9 +66,9 @@ public class PokerServer {
                 playerCards[1] = new Card(Card.Suit.Diamonds, Card.Rank.Ace);
 
                 Card[]   tableCards = new Card[3];
-                playerCards[0] = new Card(Card.Suit.Spades, Card.Rank.Eight);
-                playerCards[1] = new Card(Card.Suit.Clubs, Card.Rank.Jack);
-                playerCards[0] = new Card(Card.Suit.Spades, Card.Rank.Nine);
+                tableCards[0] = new Card(Card.Suit.Spades, Card.Rank.Eight);
+                tableCards[1] = new Card(Card.Suit.Clubs, Card.Rank.Jack);
+                tableCards[3] = new Card(Card.Suit.Spades, Card.Rank.Nine);
 
                 TableStateData.Player[] players = new TableStateData.Player[2];
                 players[0] = tsd.new Player();

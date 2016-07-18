@@ -4,7 +4,7 @@ import org.innopolis.mammba.poker.network.PokerServer;
 
 public class Main {
     public static void main(String[] args) {
-        PokerServer server = new PokerServer(9092);
+        PokerServer server = new PokerServer(8080);
         try {
             server.start();
         }
