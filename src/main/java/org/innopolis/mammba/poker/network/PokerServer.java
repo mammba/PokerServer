@@ -21,9 +21,9 @@ public class PokerServer {
         rooms.add(new Room());
 
         Configuration config = new Configuration();
+        config.getSocketConfig().setReuseAddress(true);
         config.setHostname("localhost");
         config.setPort(port);
-        // This is needed for localhost testing.
         config.setOrigin("http://localhost");
 
         server = new SocketIOServer(config);
@@ -37,6 +37,13 @@ public class PokerServer {
     public void start() throws InterruptedException {
         server.start();
         Thread.sleep(Integer.MAX_VALUE);
+        server.stop();
+    }
+
+    /**
+     * Stops the server gracefully.
+     */
+    public void stop() {
         server.stop();
     }
 

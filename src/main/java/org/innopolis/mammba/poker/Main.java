@@ -7,9 +7,11 @@ public class Main {
         PokerServer server = new PokerServer(8080);
         try {
             server.start();
-        }
-        catch(InterruptedException e) {
+        } catch(InterruptedException e) {
             e.printStackTrace();
+        } finally {
+            if (server != null)
+                server.stop();
         }
     }
 }
