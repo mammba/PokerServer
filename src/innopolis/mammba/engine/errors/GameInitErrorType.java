@@ -6,5 +6,5 @@ package innopolis.mammba.engine.errors;
  */
 
 public enum GameInitErrorType {
-    notEnoughPlayers, tooManyPlayers
+    notEnoughPlayers, tooManyPlayers, gameAlreadyStarted
 }

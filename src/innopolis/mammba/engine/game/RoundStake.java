@@ -1,6 +1,6 @@
-package innopolis.mammba.engine.rounds;
+package innopolis.mammba.engine.game;
 
-import innopolis.mammba.engine.Player;
+import innopolis.mammba.engine.player.Player;
 
 /**
  * Created by anton on 17/07/16.

@@ -1,8 +1,9 @@
-package innopolis.mammba.engine.rounds;
+package innopolis.mammba.engine.game;
 
-import innopolis.mammba.engine.Game;
-import innopolis.mammba.engine.Player;
-import innopolis.mammba.engine.PlayerState;
+import innopolis.mammba.engine.errors.GameFlowError;
+import innopolis.mammba.engine.errors.GameFlowErrorType;
+import innopolis.mammba.engine.player.Player;
+import innopolis.mammba.engine.player.PlayerState;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -11,13 +12,15 @@ import java.util.List;
  * Created by anton on 17/07/16.
  *
  */
-public class Round {
+class Round {
     private List<Player> players;
+    private Player currentPlayer;
     private List<RoundStake> stakes = new LinkedList<>();
     private Game game;
     private RoundState roundState;
-    int _secret;
-    int stakeAmount = 0;
+    private int _secret;
+    private int stakeAmount = 0;
+    private int movesCounter = 0;
 
 
     Round(List<Player> nPlayers, Game nGame, int secret){
@@ -26,27 +29,34 @@ public class Round {
         roundState = RoundState.waitToMove;
         _secret = secret;
         initStakes();
-
+        nPlayers.get(0).changeStateToWaitToMove(secret);
+        currentPlayer = nPlayers.get(0);
     }
 
     void call(Player player, int amount){
         changeStakeAmount(player, amount);
         moveTurnToNextPlayer(player);
+        movesCounter++;
     }
-    void check(Player player){
+
+    void pass(Player player){
         if( (stakeAmount == getStakeByPlayer(player).getAmount()) || (player.getState() == PlayerState.allIn) ){
+            movesCounter++;
             moveTurnToNextPlayer(player);
         }else{
-
+            throw new GameFlowError(GameFlowErrorType.incorrectAction, "Can't pass when player hasn't eniugh stakes");
         }
     }
+
     void raise(Player player, int amount){
         stakeAmount += amount;
         changeStakeAmount(player, amount);
         moveTurnToNextPlayer(player);
     }
-    void pass(Player player){
 
+    void fold (Player player){
+        movesCounter++;
+        moveTurnToNextPlayer(player);
     }
 
     private void initStakes(){
@@ -77,6 +87,7 @@ public class Round {
             for(Player player : players){
                 if(flag){
                     if( (player.getState() == PlayerState.active) || (player.getState() == PlayerState.allIn)){
+                        currentPlayer = player;
                         player.changeStateToWaitToMove(_secret);
                         break;
                     }
@@ -89,6 +100,9 @@ public class Round {
     }
 
     private boolean isRoundFinished(){
+        if(movesCounter < players.size()){
+            return false;
+        }
         for(RoundStake stake : stakes){
             if(stake.getAmount() != stakeAmount){
                 return false;
@@ -97,4 +111,7 @@ public class Round {
         return true;
     }
 
+    public Player getCurrentPlayer() {
+        return currentPlayer;
+    }
 }

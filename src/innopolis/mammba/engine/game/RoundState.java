@@ -1,4 +1,4 @@
-package innopolis.mammba.engine.rounds;
+package innopolis.mammba.engine.game;
 
 /**
  * Created by anton on 17/07/16.

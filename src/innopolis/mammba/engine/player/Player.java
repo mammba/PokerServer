@@ -1,8 +1,10 @@
-package innopolis.mammba.engine;
+package innopolis.mammba.engine.player;
 
+import innopolis.mammba.engine.User;
 import innopolis.mammba.engine.errors.*;
 
 import innopolis.mammba.engine.cards.Card;
+import innopolis.mammba.engine.game.Game;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -13,18 +15,28 @@ import java.util.List;
 
 
 public class Player {
+    private int id;
     private User user;
     private PlayerState state;
     private int _secret;
+    private Game game;
+
+    private static int idCounter = 0;
     //    Game game;
 
     List<Card> cards = new LinkedList<>();
 
 
-    Player(User nUser, int secret){
+    public Player(User nUser, int secret, Game nGame){
         user = nUser;
         state = PlayerState.active;
         _secret = secret;
+        id = ++idCounter;
+        game = nGame;
+    }
+
+    public int getId(){
+        return id;
     }
 
     public void call(int stake){
@@ -34,22 +46,24 @@ public class Player {
 
     };
 
-    public void check(){
+    public void pass(){
         checkMoveState();
-
+        game.pass(id);
+        state = PlayerState.active;
     }
 
     public void raise(int stake){
         checkMoveState();
         //TODO: check if user balance enough
         // TODO: raise in game
-
         state = PlayerState.active;
 
     }
-    public void pass(){
+    public void fold(){
         checkMoveState();
-        state = PlayerState.passed;
+        game.fold(id);
+        state = PlayerState.folded;
+
     }
 
     public void changeStateToWaitToMove(int secret){
