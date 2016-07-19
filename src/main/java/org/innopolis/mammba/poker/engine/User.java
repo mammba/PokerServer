@@ -1,9 +1,11 @@
-package org.innopolis.mammba.poker.game;
+package org.innopolis.mammba.poker.engine;
 
 import com.corundumstudio.socketio.SocketIOClient;
+import org.innopolis.mammba.poker.engine.game.Game;
 import org.innopolis.mammba.poker.network.messages.MessageType;
 import org.innopolis.mammba.poker.network.messages.TableStateUpdateMessage;
 import org.innopolis.mammba.poker.network.messages.data.TableStateData;
+import org.innopolis.mammba.poker.engine.cards.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -28,8 +30,11 @@ public class User {
     public String getNickname() {
         return nickname;
     }
-    public int getMoney() {
+    public int getBalance() {
         return money;
+    }
+    public void reduceBalance(int amount){
+        money -= amount;
     }
     public UUID getUUID() {
         return uuid;
@@ -48,7 +53,7 @@ public class User {
         TableStateUpdateMessage tsum = new TableStateUpdateMessage();
         TableStateData tsd = new TableStateData();
 
-        String[] actions = game.getPossibleActions(sp);
+       /* String[] actions = game.getPossibleActions(sp);
         Card[]   playerCards = (Card[])game.getMyCards(sp).toArray();
         Card[]   tableCards = (Card[])game.getTableCards(sp).toArray();
 
@@ -66,7 +71,7 @@ public class User {
         tsd.setOverallStakes(game.getOverallStakes());
         tsd.setPlayerCards(playerCards);
         tsd.setTableCards(tableCards);
-        tsd.setPlayers(players);
+        tsd.setPlayers(players);*/
 
         tsum.setData(tsd);
 

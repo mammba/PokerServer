@@ -2,7 +2,8 @@ package org.innopolis.mammba.poker.network;
 
 import com.corundumstudio.socketio.listener.*;
 import com.corundumstudio.socketio.*;
-import org.innopolis.mammba.poker.game.*;
+import org.innopolis.mammba.poker.engine.*;
+import org.innopolis.mammba.poker.engine.cards.*;
 import org.innopolis.mammba.poker.network.messages.StateUpdateMessage;
 import org.innopolis.mammba.poker.network.messages.TableStateUpdateMessage;
 import org.innopolis.mammba.poker.network.messages.data.TableStateData;
@@ -67,7 +68,7 @@ public class PokerServer {
                 TableStateUpdateMessage tsum = new TableStateUpdateMessage();
                 TableStateData tsd = new TableStateData();
 
-                String[] actions = {"fold", "check"};
+               /* String[] actions = {"fold", "check"};
                 Card[]   playerCards = new Card[2];
                 playerCards[0] = new Card(Card.Suit.Hearts, Card.Rank.Ace);
                 playerCards[1] = new Card(Card.Suit.Diamonds, Card.Rank.Ace);
@@ -95,7 +96,7 @@ public class PokerServer {
                 tsd.setOverallStakes(1000);
                 tsd.setPlayerCards(playerCards);
                 tsd.setTableCards(tableCards);
-                tsd.setPlayers(players);
+                tsd.setPlayers(players);*/
 
                 tsum.setData(tsd);
 
@@ -120,12 +121,12 @@ public class PokerServer {
         server.addEventListener("su", StateUpdateMessage.class, new DataListener<StateUpdateMessage>() {
             public void onData(SocketIOClient client, StateUpdateMessage data, AckRequest ackRequest) {
                 User user = getUserBySessionID(client.getSessionId());
-                // For 0.0.1 this will just call rooms.get(0).game().* methods
+                // For 0.0.1 this will just call rooms.get(0).engine().* methods
 
                 TableStateUpdateMessage tsum = new TableStateUpdateMessage();
                 TableStateData tsd = new TableStateData();
 
-                String[] actions = {"fold", "check"};
+               /* String[] actions = {"fold", "check"};
                 Card[]   playerCards = new Card[2];
                 playerCards[0] = new Card(Card.Suit.Hearts, Card.Rank.Ace);
                 playerCards[1] = new Card(Card.Suit.Diamonds, Card.Rank.Ace);
@@ -155,7 +156,7 @@ public class PokerServer {
                 tsd.setTableCards(tableCards);
                 tsd.setPlayers(players);
 
-                tsum.setData(tsd);
+                tsum.setData(tsd);*/
 
                 client.sendEvent("su", tsum);
             }

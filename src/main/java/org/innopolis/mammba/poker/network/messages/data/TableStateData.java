@@ -1,6 +1,6 @@
 package org.innopolis.mammba.poker.network.messages.data;
 
-import org.innopolis.mammba.poker.game.Card;
+import org.innopolis.mammba.poker.engine.cards.*;
 
 public class TableStateData extends AbstractMessageData {
     public TableStateData() {
