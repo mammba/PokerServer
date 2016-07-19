@@ -1,13 +1,14 @@
 package org.innopolis.mammba.poker.network.messages.data;
 
-import org.innopolis.mammba.poker.game.Card;
+import org.innopolis.mammba.poker.engine.cards.Card;
+import org.innopolis.mammba.poker.network.messages.data.AbstractMessageData;
 
 public class TableStateData extends AbstractMessageData {
     public TableStateData() {
         super(MessageDataType.TABLE_STATE);
     }
 
-    // Public data (availible to every user)
+    // Public data (availaible to every user)
     private Card[]   tableCards;
     private int      overallStakes;
     private Player[] players;

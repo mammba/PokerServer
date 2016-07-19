@@ -2,7 +2,8 @@ package org.innopolis.mammba.poker.network;
 
 import com.corundumstudio.socketio.listener.*;
 import com.corundumstudio.socketio.*;
-import org.innopolis.mammba.poker.game.*;
+import org.innopolis.mammba.poker.engine.*;
+import org.innopolis.mammba.poker.engine.player.Player;
 import org.innopolis.mammba.poker.network.messages.StateUpdateMessage;
 import org.innopolis.mammba.poker.network.messages.TableStateUpdateMessage;
 import org.innopolis.mammba.poker.network.messages.data.TableStateData;
@@ -17,6 +18,7 @@ public class PokerServer {
     private HashMap<UUID, User> users = new HashMap<UUID, User>();
     private List<Room> rooms = new LinkedList<Room>();
     public PokerServer(int port) {
+        test();
         // For the basic version we'll use only one room
         rooms.add(new Room());
 
@@ -28,6 +30,28 @@ public class PokerServer {
 
         server = new SocketIOServer(config);
         addEventListeners();
+    }
+    public void test() {
+        rooms.add(new Room());
+        User user1 = new User("user1", 200);
+        User user2 = new User("user2", 200);
+        User user3 = new User("user3", 200);
+
+        users.put(new UUID(5, 4), user1);
+        rooms.get(0).addPlayer(new Player(user1, rooms.get(0)));
+        users.put(new UUID(5, 4), user2);
+        rooms.get(0).addPlayer(new Player(user2, rooms.get(0)));
+        users.put(new UUID(5, 4), user3);
+        rooms.get(0).addPlayer(new Player(user3, rooms.get(0)));
+
+        Player player1 = rooms.get(0).getGame().addUser(user1);
+        Player player2 = rooms.get(0).getGame().addUser(user2);
+        Player player3 = rooms.get(0).getGame().addUser(user3);
+        rooms.get(0).getGame().start();
+
+        player1.fold();
+
+        player2.pass();
     }
 
     /**
@@ -120,7 +144,7 @@ public class PokerServer {
         server.addEventListener("su", StateUpdateMessage.class, new DataListener<StateUpdateMessage>() {
             public void onData(SocketIOClient client, StateUpdateMessage data, AckRequest ackRequest) {
                 User user = getUserBySessionID(client.getSessionId());
-                // For 0.0.1 this will just call rooms.get(0).game().* methods
+                // For 0.0.1 this will just call rooms.get(0).engine().* methods
 
                 TableStateUpdateMessage tsum = new TableStateUpdateMessage();
                 TableStateData tsd = new TableStateData();

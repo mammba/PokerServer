@@ -1,21 +1,19 @@
-package innopolis.mammba.engine.game;
+package org.innopolis.mammba.poker.engine.game;
 
-import innopolis.mammba.engine.User;
-import innopolis.mammba.engine.cards.Card;
-import innopolis.mammba.engine.cards.CardDeck;
-import innopolis.mammba.engine.errors.GameFlowError;
-import innopolis.mammba.engine.errors.GameFlowErrorType;
-import innopolis.mammba.engine.errors.GameInitError;
-import innopolis.mammba.engine.errors.GameInitErrorType;
-import innopolis.mammba.engine.player.Player;
+import org.innopolis.mammba.poker.engine.Spectator;
+import org.innopolis.mammba.poker.engine.User;
+import org.innopolis.mammba.poker.engine.cards.Card;
+import org.innopolis.mammba.poker.engine.cards.CardDeck;
+import org.innopolis.mammba.poker.engine.errors.GameFlowError;
+import org.innopolis.mammba.poker.engine.errors.GameFlowErrorType;
+import org.innopolis.mammba.poker.engine.errors.GameInitError;
+import org.innopolis.mammba.poker.engine.errors.GameInitErrorType;
+import org.innopolis.mammba.poker.engine.player.Player;
 
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 
-/**
- * Created by anton on 17/07/16.
- *
- */
 public class Game {
     private LinkedList<Player> players;
     private CardDeck cardsDeck;
@@ -23,8 +21,6 @@ public class Game {
     private LinkedList<Round> rounds;
     private int _secret;
     private Round currentRound;
-
-
 
     public Game(LinkedList<User> users){
         checkInitSettings(users);
@@ -114,23 +110,48 @@ public class Game {
                 return player;
             }
         }
-        throw new GameFlowError(GameFlowErrorType.accessForbidden, "No access to this game");
+        throw new GameFlowError(GameFlowErrorType.accessForbidden, "No access to this engine");
     }
 
     private boolean isMoveAllowed(Player player){
         return player.equals(currentRound.getCurrentPlayer());
     }
 
-    private void checkMoveAbility(Player player){
-        if(!isMoveAllowed(player)){
+    private void checkMoveAbility(Player player) {
+        if (!isMoveAllowed(player)) {
             throw new GameFlowError(GameFlowErrorType.notYourTurn, "Not your turn");
         }
     }
+    public List<Card> getMyCards(Spectator sp) {
+        // TODO
+        return null;
+    }
+    public List<Card> getTableCards(Spectator sp) {
+        // TODO
+        return null;
+    }
+    public List<Player> getPlayers() {
+        // TODO
+        return null;
+    }
+    public boolean isMyTurn(Spectator sp) {
+        // TODO
+        return false;
+    }
+    public int getStake(Spectator sp) {
+        // TODO
+        return 0;
+    }
+    public int getOverallStakes() {
+        // TODO
+        return 0;
+    }
+    public String[] getPossibleActions(Spectator sp) {
+        // TODO
+        return new String[]{"fold", "stake"};
+    }
 }
-
 
 enum gameMoves{
     call, pass, fold, raise
 }
-
-

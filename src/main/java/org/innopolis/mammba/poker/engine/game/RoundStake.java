@@ -1,6 +1,6 @@
-package innopolis.mammba.engine.game;
+package org.innopolis.mammba.poker.engine.game;
 
-import innopolis.mammba.engine.player.Player;
+import org.innopolis.mammba.poker.engine.player.Player;
 
 /**
  * Created by anton on 17/07/16.

@@ -1,4 +1,4 @@
-package innopolis.mammba.engine.player;
+package org.innopolis.mammba.poker.engine.player;
 
 /**
  * Created by anton on 17/07/16.

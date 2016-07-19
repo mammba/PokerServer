@@ -1,32 +1,26 @@
-package innopolis.mammba.engine.player;
+package org.innopolis.mammba.poker.engine.player;
 
-import innopolis.mammba.engine.User;
-import innopolis.mammba.engine.errors.*;
-
-import innopolis.mammba.engine.cards.Card;
-import innopolis.mammba.engine.game.Game;
+import org.innopolis.mammba.poker.engine.*;
+import org.innopolis.mammba.poker.engine.cards.Card;
+import org.innopolis.mammba.poker.engine.errors.GameFlowError;
+import org.innopolis.mammba.poker.engine.errors.GameFlowErrorType;
+import org.innopolis.mammba.poker.engine.game.Game;
 
 import java.util.LinkedList;
 import java.util.List;
 
-/**
- * Created by anton on 17/07/16.
- */
-
-
-public class Player {
+public class Player extends Spectator {
     private int id;
     private User user;
     private PlayerState state;
     private int _secret;
     private Game game;
-
     private static int idCounter = 0;
-    //    Game game;
 
-    List<Card> cards = new LinkedList<>();
-
-
+    List<Card> cards = new LinkedList<Card>();
+    public Player(User user, Room room) {
+        super(user, room);
+    }
     public Player(User nUser, int secret, Game nGame){
         user = nUser;
         state = PlayerState.active;
@@ -55,7 +49,7 @@ public class Player {
     public void raise(int stake){
         checkMoveState();
         //TODO: check if user balance enough
-        // TODO: raise in game
+        // TODO: raise in engine
         state = PlayerState.active;
 
     }
@@ -97,5 +91,5 @@ public class Player {
     public PlayerState getState(){
         return state;
     }
-}
 
+}

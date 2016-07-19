@@ -1,4 +1,4 @@
-package innopolis.mammba.engine.errors;
+package org.innopolis.mammba.poker.engine.errors;
 
 /**
  * Created by anton on 17/07/16.

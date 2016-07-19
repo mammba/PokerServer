@@ -1,4 +1,4 @@
-package innopolis.mammba.engine.cards;
+package org.innopolis.mammba.poker.engine.cards;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -12,7 +12,7 @@ public class CardDeck {
     private LinkedList<Card> cards;
 
     public CardDeck(){
-        cards = new LinkedList<>();
+        cards = new LinkedList<Card>();
         for (Suit suit : Suit.values()) {
             for (Rank rank : Rank.values()) {
                 cards.add(new Card(suit, rank));
@@ -28,7 +28,7 @@ public class CardDeck {
         Collections.shuffle(cards);
     }
 
-    public Card getCard(){
+    public Card getCard() {
         return cards.pop();
     }
 

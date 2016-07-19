@@ -1,4 +1,7 @@
-package org.innopolis.mammba.poker.game;
+package org.innopolis.mammba.poker.engine;
+
+import org.innopolis.mammba.poker.engine.game.Game;
+import org.innopolis.mammba.poker.engine.player.Player;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -33,7 +36,7 @@ public class Room {
     public void removeUser(User user) {
         for(Spectator sp:users)
             if (sp.getUser().equals(user)) {
-                // TODO: call 'fold' from the game logic if sp is a PLayer
+                // TODO: call 'fold' from the engine logic if sp is a PLayer
                 this.users.remove(sp);
             }
     }

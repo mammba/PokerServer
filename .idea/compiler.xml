@@ -18,7 +18,7 @@
         <processorPath useClasspath="true" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
+    <bytecodeTargetLevel target="1.8">
       <module name="PokerServer_main" target="1.5" />
       <module name="PokerServer_test" target="1.5" />
     </bytecodeTargetLevel>

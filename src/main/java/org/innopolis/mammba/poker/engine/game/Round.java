@@ -1,9 +1,9 @@
-package innopolis.mammba.engine.game;
+package org.innopolis.mammba.poker.engine.game;
 
-import innopolis.mammba.engine.errors.GameFlowError;
-import innopolis.mammba.engine.errors.GameFlowErrorType;
-import innopolis.mammba.engine.player.Player;
-import innopolis.mammba.engine.player.PlayerState;
+import org.innopolis.mammba.poker.engine.errors.GameFlowError;
+import org.innopolis.mammba.poker.engine.errors.GameFlowErrorType;
+import org.innopolis.mammba.poker.engine.player.*;
+import org.innopolis.mammba.poker.engine.game.Game;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -15,13 +15,12 @@ import java.util.List;
 class Round {
     private List<Player> players;
     private Player currentPlayer;
-    private List<RoundStake> stakes = new LinkedList<>();
+    private List<RoundStake> stakes = new LinkedList<RoundStake>();
     private Game game;
     private RoundState roundState;
     private int _secret;
     private int stakeAmount = 0;
     private int movesCounter = 0;
-
 
     Round(List<Player> nPlayers, Game nGame, int secret){
         players = nPlayers;

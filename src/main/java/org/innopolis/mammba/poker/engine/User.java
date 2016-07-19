@@ -1,6 +1,9 @@
-package org.innopolis.mammba.poker.game;
+package org.innopolis.mammba.poker.engine;
 
 import com.corundumstudio.socketio.SocketIOClient;
+import org.innopolis.mammba.poker.engine.cards.Card;
+import org.innopolis.mammba.poker.engine.game.Game;
+import org.innopolis.mammba.poker.engine.player.Player;
 import org.innopolis.mammba.poker.network.messages.MessageType;
 import org.innopolis.mammba.poker.network.messages.TableStateUpdateMessage;
 import org.innopolis.mammba.poker.network.messages.data.TableStateData;
@@ -12,7 +15,7 @@ public class User {
     private UUID uuid;
     private SocketIOClient client;
     private String nickname;
-    private int money;
+    private int balance;
     private static Long userCounter = 0L;
 
     /**
@@ -23,13 +26,18 @@ public class User {
         this.client = client;
         this.uuid = client.getSessionId();
         nickname = "Пользователь "+userCounter.toString();
+        balance = 500;
         userCounter++;
+    }
+    public User(String nName, int nBalance){
+        this.nickname = nName;
+        balance = nBalance;
     }
     public String getNickname() {
         return nickname;
     }
-    public int getMoney() {
-        return money;
+    public int getBalance() {
+        return balance;
     }
     public UUID getUUID() {
         return uuid;
@@ -40,8 +48,8 @@ public class User {
     public void setNickname(String nickname) {
         this.nickname = nickname;
     }
-    public void setMoney(int money) {
-        this.money = money;
+    public void setBalance(int balance) {
+        this.balance = balance;
     }
     public void updateData(Room room, Spectator sp) {
         Game game = room.getGame();
