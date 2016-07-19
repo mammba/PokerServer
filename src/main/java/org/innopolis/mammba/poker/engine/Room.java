@@ -27,6 +27,7 @@ public class Room {
      */
     public void addPlayer(Player sp) {
         this.users.add(sp);
+        game.addPlayer(sp);
         // FIXME: this is only for minimum viable product v.0.0.1
         if (users.size() == 2)
             game.start();
