@@ -25,8 +25,6 @@ public class PokerServer {
         config.getSocketConfig().setReuseAddress(true);
         config.setHostname("localhost");
         config.setPort(port);
-        config.setOrigin("http://localhost");
-
         server = new SocketIOServer(config);
         addEventListeners();
     }
