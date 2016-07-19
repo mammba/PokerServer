@@ -24,10 +24,10 @@ public class TableStateData extends AbstractMessageData {
         private boolean turn;
 
         // Getters
-        public String getName()  { return name; }
-        public String getID()    { return id; }
-        public int getStake()    { return stake; }
-        public boolean getTurn() { return turn; }
+        public String  getName()  { return name; }
+        public String  getID()    { return id; }
+        public int     getStake() { return stake; }
+        public boolean getTurn()  { return turn; }
 
         // Setters
         public void setName(String name)  { this.name = name; }
