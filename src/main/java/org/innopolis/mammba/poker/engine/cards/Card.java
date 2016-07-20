@@ -19,6 +19,7 @@ public class Card{
             return 0;
         }
     }
+
     public int getPriority(){
         int i = 1;
         for (Rank rank : Rank.values()) {
@@ -30,13 +31,20 @@ public class Card{
         return i;
     }
 
+    public String getNotation() {
+        return toString();
+    }
+
+    public String toString() {
+        return suit.toString()+rank.toString();
+    }
 }
 
 enum Suit {
-    Hearts, Diamonds, Spades, Clubs;
+    Hearts, Diamonds, Spades, Clubs
 }
 
 enum Rank {
-    Six, Seven, Eight, Nine, Ten, Jack, Queen, King, Ace;
+    Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten, Jack, Queen, King, Ace
 }
 

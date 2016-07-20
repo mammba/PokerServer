@@ -29,6 +29,11 @@ public class PlayerAction{
         return amount;
     }
 
+    @Override
+    public String toString() {
+        return type.toString();
+    }
+
 }
 
 

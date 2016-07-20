@@ -29,6 +29,7 @@ public class Player extends Spectator {
 
     public Player(Room room, Game nGame, User user, int secret){
         super(user, room);
+        user.setPlayer(this);
         state = PlayerState.active;
         _secret = secret;
         id = ++idCounter;

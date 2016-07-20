@@ -21,6 +21,7 @@ import java.util.List;
  *
  */
 public class Game {
+    public  final static int MAX_NUMBER_OF_PLAYERS = 5;
     private LinkedList<Player> players;
     private CardDeck cardsDeck;
     private LinkedList<Card> openedCards;
@@ -43,14 +44,13 @@ public class Game {
     public Player addPlayer(Spectator spectator){
         if(rounds.size() > 0 ){
             throw new GameInitError(GameInitErrorType.gameAlreadyStarted, "Game has already started");
-        }else if(players.size() > 5){
+        }else if(players.size() > MAX_NUMBER_OF_PLAYERS){
             throw new GameInitError(GameInitErrorType.tooManyPlayers, "Game has already 5 players");
         }
         Player player = new Player(spectator.getRoom(), this, spectator.getUser(), _secret);
         players.add(player);
         return player;
     }
-
 
     private Round createRound(){
         Round newRound = new Round(players, this, _secret);
@@ -155,6 +155,10 @@ public class Game {
 
     public int getAllStakes(){
         return allStackes;
+    }
+
+    public int getPlayerStake(Player player) {
+        return currentRound.getStakeByPlayer(player).getAmount();
     }
 
     public List<Player> getPlayers(){
