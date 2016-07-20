@@ -1,15 +1,17 @@
-package org.innopolis.mammba.poker.game;
+package org.innopolis.mammba.poker.engine;
 
-import java.util.List;
 import  java.util.UUID;
 
 public class Spectator {
     private User user;
     private Room room;
+
     public Spectator(User user, Room room) {
         this.user = user;
         this.room = room;
+        user.setSpectator(this);
     }
+
     public User getUser() {
         return user;
     }
@@ -21,5 +23,8 @@ public class Spectator {
     }
     public String getNickname() {
         return user.getNickname();
+    }
+    public Room getRoom(){
+        return room;
     }
 }

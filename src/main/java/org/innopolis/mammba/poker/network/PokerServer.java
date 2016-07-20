@@ -2,28 +2,31 @@ package org.innopolis.mammba.poker.network;
 
 import com.corundumstudio.socketio.listener.*;
 import com.corundumstudio.socketio.*;
-import org.innopolis.mammba.poker.game.*;
-import org.innopolis.mammba.poker.network.messages.StateUpdateMessage;
-import org.innopolis.mammba.poker.network.messages.TableStateUpdateMessage;
-import org.innopolis.mammba.poker.network.messages.data.TableStateData;
+import org.innopolis.mammba.poker.engine.*;
+import org.innopolis.mammba.poker.engine.errors.InvalidStateError;
+import org.innopolis.mammba.poker.engine.player.Player;
+import org.innopolis.mammba.poker.network.messages.PlayerActionStateUpdateMessage;
+import org.innopolis.mammba.poker.network.messages.data.PlayerActionData;
 
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
+import java.util.logging.Logger;
 
 public class PokerServer {
-    private SocketIOServer server;
+    private final static Logger LOG = Logger.getLogger("PokerServer");
+    private SocketIOServer      server;
     private HashMap<UUID, User> users = new HashMap<UUID, User>();
-    private List<Room> rooms = new LinkedList<Room>();
-    public PokerServer(int port) {
-        // For the basic version we'll use only one room
-        rooms.add(new Room());
+    private List<Room>          rooms = new LinkedList<Room>();
 
+    public PokerServer(int port) {
         Configuration config = new Configuration();
         config.getSocketConfig().setReuseAddress(true);
         config.setHostname("localhost");
         config.setPort(port);
+        
+        // CHECK
         config.setOrigin("http://localhost");
         config.setTransports(Transport.WEBSOCKET);
 
@@ -65,102 +68,99 @@ public class PokerServer {
     private void addEventListeners() {
         server.addConnectListener(new ConnectListener() {
             public void onConnect(SocketIOClient client) {
-                TableStateUpdateMessage tsum = new TableStateUpdateMessage();
-                TableStateData tsd = new TableStateData();
-
-                String[] actions = {"fold", "check"};
-                Card[]   playerCards = new Card[2];
-                playerCards[0] = new Card(Card.Suit.Hearts, Card.Rank.Ace);
-                playerCards[1] = new Card(Card.Suit.Diamonds, Card.Rank.Ace);
-
-                Card[]   tableCards = new Card[3];
-                tableCards[0] = new Card(Card.Suit.Spades, Card.Rank.Eight);
-                tableCards[1] = new Card(Card.Suit.Clubs, Card.Rank.Jack);
-                tableCards[2] = new Card(Card.Suit.Spades, Card.Rank.Nine);
-
-                TableStateData.Player[] players = new TableStateData.Player[2];
-                players[0] = tsd.new Player();
-                players[1] = tsd.new Player();
-
-                players[0].setID("id1");
-                players[0].setName("Mike");
-                players[0].setStake(100);
-                players[0].setTurn(true);
-
-                players[1].setID("id2");
-                players[1].setName("Bulat");
-                players[1].setStake(300);
-                players[1].setTurn(false);
-
-                tsd.setActionList(actions);
-                tsd.setOverallStakes(1000);
-                tsd.setPlayerCards(playerCards);
-                tsd.setTableCards(tableCards);
-                tsd.setPlayers(players);
-
-                tsum.setData(tsd);
-
-                client.sendEvent("su", tsum);
-
                 User pk = new User(client);
+                // Set default money amount
+                pk.setMoney(1000);
+
+                LOG.info("Client " + client.getSessionId().toString() + " connected");
+
+                // Add user
                 users.put(client.getSessionId(), pk);
-                // For the basic version we'll use only one room
-                rooms.get(0).addPlayer(new Player(pk, rooms.get(0)));
+
+                // If there is a room with free places, enter it
+                for (Room room : rooms) {
+                    if (room.hasPlace()) {
+                        room.addPlayer(new Spectator(pk, room));
+                        return;
+                    }
+                }
+
+                // Otherwise, create new room and enter it
+                Room room = new Room();
+                rooms.add(room);
+                room.addPlayer(new Spectator(pk, room));
             }
         });
+
         server.addDisconnectListener(new DisconnectListener() {
             public void onDisconnect(SocketIOClient client) {
                 User user = getUserBySessionID(client.getSessionId());
-                // For the basic version we'll use only one room
-                // rooms.get(0).removeUser();
-                rooms.get(0).removeUser(user);
+
+                LOG.info("Client " + client.getSessionId().toString() + " disconnected");
+
+                // If user spectate some game (or play), delete him from room
+                if(user.getSpectator() != null) {
+                    user.getSpectator().getRoom().removeUser(user);
+                }
+
+                // Remove user session
                 users.remove(client.getSessionId());
             }
         });
 
-        server.addEventListener("su", StateUpdateMessage.class, new DataListener<StateUpdateMessage>() {
-            public void onData(SocketIOClient client, StateUpdateMessage data, AckRequest ackRequest) {
+        server.addEventListener("su", PlayerActionStateUpdateMessage.class, new DataListener<PlayerActionStateUpdateMessage>() {
+            public void onData(final SocketIOClient client, PlayerActionStateUpdateMessage msg, final AckRequest ackRequest) {
                 User user = getUserBySessionID(client.getSessionId());
-                // For 0.0.1 this will just call rooms.get(0).game().* methods
+                Room room = user.getSpectator().getRoom();
+                String ackMessage = "OK";
 
-                TableStateUpdateMessage tsum = new TableStateUpdateMessage();
-                TableStateData tsd = new TableStateData();
+                LOG.info("Got StateUpdate of type " + msg.messageDataType().toString()
+                        + " from client " + client.getSessionId().toString());
 
-                String[] actions = {"fold", "check"};
-                Card[]   playerCards = new Card[2];
-                playerCards[0] = new Card(Card.Suit.Hearts, Card.Rank.Ace);
-                playerCards[1] = new Card(Card.Suit.Diamonds, Card.Rank.Ace);
-
-                Card[]   tableCards = new Card[3];
-                tableCards[0] = new Card(Card.Suit.Spades, Card.Rank.Eight);
-                tableCards[1] = new Card(Card.Suit.Clubs, Card.Rank.Jack);
-                tableCards[2] = new Card(Card.Suit.Spades, Card.Rank.Nine);
-
-                TableStateData.Player[] players = new TableStateData.Player[2];
-                players[0] = tsd.new Player();
-                players[1] = tsd.new Player();
-
-                players[0].setID("id1");
-                players[0].setName("Mike");
-                players[0].setStake(100);
-                players[0].setTurn(true);
-
-                players[1].setID("id2");
-                players[1].setName("Bulat");
-                players[1].setStake(300);
-                players[1].setTurn(false);
-
-                tsd.setActionList(actions);
-                tsd.setOverallStakes(1000);
-                tsd.setPlayerCards(playerCards);
-                tsd.setTableCards(tableCards);
-                tsd.setPlayers(players);
-
-                tsum.setData(tsd);
-
-                client.sendEvent("su", tsum);
+                // Check what concrete state update we got from client
+                try {
+                    switch (msg.messageDataType()) {
+                        case PLAYER_ACTION:
+                            handlePlayerAction(user, msg);
+                            break;
+                        default:
+                            ackMessage = "Unknown method";
+                    }
+                    ackRequest.sendAckData(ackMessage);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } catch (Error e) {
+                    LOG.warning("User " + user.getUUID() + " " + e.toString());
+                    ackRequest.sendAckData(e.getMessage());
+                }
             }
         });
     }
 
+    private static void handlePlayerAction(User user, PlayerActionStateUpdateMessage msg) {
+        Room room = user.getSpectator().getRoom();
+
+        if(room == null) {
+            throw new InvalidStateError("user is not in the room");
+        }
+
+        if(user.getPlayer() == null) {
+            throw new InvalidStateError("user is not assigned to player");
+        }
+
+        PlayerActionData action = msg.getData();
+        Player player = user.getPlayer();
+
+        if(action.getAction().equals("call")) {
+            player.call();
+        } else if(action.getAction().equals("raise")) {
+            player.raise(action.getStake());
+        } else if(action.getAction().equals("pass")) {
+            player.pass();
+        } else if(action.getAction().equals("check")) {
+            player.pass();
+        } else if(action.getAction().equals("fold")) {
+            player.fold();
+        }
+    }
 }

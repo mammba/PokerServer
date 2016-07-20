@@ -1,10 +1,7 @@
-package org.innopolis.mammba.poker.game;
+package org.innopolis.mammba.poker.engine.cards;
 
-// NOTE!!!
-// THIS IS TEMPORARY FILE
-// REMOVE ON MERGE WITH ANTON
 
-public class Card {
+public class Card{
     private Suit suit;
     private Rank rank;
 
@@ -34,16 +31,20 @@ public class Card {
         return i;
     }
 
-    public enum Suit {
-        Hearts, Diamonds, Spades, Clubs;
-    }
-
-    public enum Rank {
-        Six, Seven, Eight, Nine, Ten, Jack, Queen, King, Ace;
-    }
-
     public String getNotation() {
-        return suit.toString() + rank.toString();
+        return toString();
     }
+
+    public String toString() {
+        return suit.toString()+rank.toString();
+    }
+}
+
+enum Suit {
+    Hearts, Diamonds, Spades, Clubs
+}
+
+enum Rank {
+    Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten, Jack, Queen, King, Ace
 }
 
