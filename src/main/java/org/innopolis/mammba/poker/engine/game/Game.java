@@ -1,6 +1,7 @@
 package org.innopolis.mammba.poker.engine.game;
 
 
+import org.innopolis.mammba.poker.engine.Room;
 import org.innopolis.mammba.poker.engine.Spectator;
 import org.innopolis.mammba.poker.engine.cards.Card;
 import org.innopolis.mammba.poker.engine.cards.CardDeck;
@@ -30,15 +31,17 @@ public class Game {
     private Round currentRound;
     private int allStackes;
     private GameState state;
+    private Room room;
 
 
-    public Game(){
+    public Game(Room r){
         cardsDeck = new CardDeck();
         openedCards = new LinkedList<Card>();
         rounds = new LinkedList<Round>();
         _secret = Math.abs((new Date()).hashCode());
         players = new LinkedList<Player>();
         state = GameState.waitForStart;
+        room = r;
     }
 
     public Player addPlayer(Spectator spectator){
@@ -49,6 +52,7 @@ public class Game {
         }
         Player player = new Player(spectator.getRoom(), this, spectator.getUser(), _secret);
         players.add(player);
+        room.notifySpectators();
         return player;
     }
 
@@ -57,6 +61,7 @@ public class Game {
         rounds.add(newRound);
         currentRound = newRound;
         openedCards.add(cardsDeck.getCard());
+        room.notifySpectators();
         return newRound;
     };
 
@@ -67,6 +72,7 @@ public class Game {
         openedCards.add(cardsDeck.getCard());
         openedCards.add(cardsDeck.getCard());
         openedCards.add(cardsDeck.getCard());
+        room.notifySpectators();
         return newRound;
     };
 
@@ -74,6 +80,7 @@ public class Game {
         Player currentPlayer = getPlayerById(playerId);
         checkMoveAbility(currentPlayer);
         currentRound.call(currentPlayer);
+        room.notifySpectators();
         checkRoundState();
     }
 
@@ -82,6 +89,7 @@ public class Game {
         checkMoveAbility(currentPlayer);
         currentRound.raise(currentPlayer, amount);
         checkRoundState();
+        room.notifySpectators();
     }
 
     public void pass(int playerId){
@@ -89,6 +97,7 @@ public class Game {
         checkMoveAbility(currentPlayer);
         currentRound.pass(currentPlayer);
         checkRoundState();
+        room.notifySpectators();
     }
 
     public void fold(int playerId){
@@ -96,6 +105,7 @@ public class Game {
         checkMoveAbility(currentPlayer);
         currentRound.fold(currentPlayer);
         checkRoundState();
+        room.notifySpectators();
     }
 
     public void start(){
@@ -112,6 +122,7 @@ public class Game {
             currentRound = newRound;
             state = GameState.started;
         }
+        room.notifySpectators();
     }
 
     private Player getPlayerById(int id){

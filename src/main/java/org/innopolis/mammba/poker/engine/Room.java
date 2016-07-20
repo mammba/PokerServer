@@ -10,7 +10,7 @@ public class Room {
     private static int MAX_PLAYERS = 2;
     private static Long id = 0L;
     private List<Spectator> users = new LinkedList<Spectator>();
-    private Game game = new Game();
+    private Game game = new Game(this);
     public Room() {
         id++;
     }
