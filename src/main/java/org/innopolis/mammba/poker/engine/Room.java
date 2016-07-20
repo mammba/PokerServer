@@ -25,7 +25,7 @@ public class Room {
      * Adds a player to a room.
      * @param sp Player
      */
-    public void addPlayer(Player sp) {
+    public void addPlayer(Spectator sp) {
         this.users.add(sp);
         game.addPlayer(sp);
         // FIXME: this is only for minimum viable product v.0.0.1
@@ -40,12 +40,18 @@ public class Room {
                 this.users.remove(sp);
             }
     }
+
     public Game getGame() {
         return game;
     }
+
     public void notifySpectators() {
         for(Spectator sp:users) {
             sp.notifySpectator();
         }
+    }
+
+    public boolean hasPlace() {
+        return game.getPlayers().size() <= Game.MAX_NUMBER_OF_PLAYERS;
     }
 }
