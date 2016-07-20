@@ -1,11 +1,13 @@
 package org.innopolis.mammba.poker.engine;
 
+import org.innopolis.mammba.poker.engine.errors.InvalidStateError;
 import org.innopolis.mammba.poker.engine.game.Game;
 
 import java.util.LinkedList;
 import java.util.List;
 
 public class Room {
+    private static int MAX_PLAYERS = 2;
     private static Long id = 0L;
     private List<Spectator> users = new LinkedList<Spectator>();
     private Game game = new Game();
@@ -26,19 +28,22 @@ public class Room {
      * @param sp Player
      */
     public void addPlayer(Spectator sp) {
+        if(this.game.getPlayers().size() >= MAX_PLAYERS) {
+            throw new InvalidStateError("Room is full");
+        }
+
         this.users.add(sp);
         game.addPlayer(sp);
         // FIXME: this is only for minimum viable product v.0.0.1
-        if (users.size() == 2)
+        if (users.size() == MAX_PLAYERS)
             game.start();
     }
 
     public void removeUser(User user) {
-        for(Spectator sp:users)
-            if (sp.getUser().equals(user)) {
-                // TODO: call 'fold' from the engine logic if sp is a PLayer
-                this.users.remove(sp);
-            }
+        if(user.getPlayer() != null) {
+            user.getPlayer().fold();
+        }
+        users.remove(user);
     }
 
     public Game getGame() {
@@ -52,6 +57,6 @@ public class Room {
     }
 
     public boolean hasPlace() {
-        return game.getPlayers().size() <= Game.MAX_NUMBER_OF_PLAYERS;
+        return game.getPlayers().size() < MAX_PLAYERS;
     }
 }
