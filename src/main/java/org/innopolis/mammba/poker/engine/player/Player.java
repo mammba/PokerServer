@@ -13,10 +13,11 @@ import java.util.List;
 
 
 public class Player extends Spectator {
-    private int id;
+    private int         id;
     private PlayerState state;
-    private int _secret;
-    private Game game;
+    private int         _secret;
+    private Game        game;
+    private boolean     shouldFold;
 
     private static int idCounter = 0;
 
@@ -47,7 +48,7 @@ public class Player extends Spectator {
         checkMoveState();
         state = PlayerState.active;
         game.call(id);
-    };
+    }
 
     public void pass(){
         if(isGameDied()){
@@ -68,22 +69,27 @@ public class Player extends Spectator {
         }
         game.raise(id, stake);
         state = PlayerState.active;
-
     }
 
     public void fold(){
         if(isGameDied()){
             throw new GameFlowError(GameFlowErrorType.gameFinished, "Game has finished");
         }
-        checkMoveState();
-        game.fold(id);
-//        state = PlayerState.folded;
 
+        if(!isAllowedToMove()) {
+            shouldFold = true;
+        } else {
+            checkMoveState();
+            game.fold(id);
+        }
     }
 
     public void changeStateToWaitToMove(int secret){
         if(secret == _secret){
             state = PlayerState.waitForMove;
+            if(shouldFold) {
+                fold();
+            }
         }else{
             throw new Error("Invalid key");
         }
@@ -95,8 +101,6 @@ public class Player extends Spectator {
             throw new Error("Invalid key");
         }
     }
-
-
 
     private void checkMoveState(){
         if(!isAllowedToMove()){
