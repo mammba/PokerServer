@@ -1,11 +1,13 @@
 package org.innopolis.mammba.poker.engine;
 
 import com.corundumstudio.socketio.SocketIOClient;
+import org.innopolis.mammba.poker.engine.cards.Card;
 import org.innopolis.mammba.poker.engine.game.Game;
+import org.innopolis.mammba.poker.engine.player.Player;
+import org.innopolis.mammba.poker.engine.player.PlayerAction;
 import org.innopolis.mammba.poker.network.messages.MessageType;
 import org.innopolis.mammba.poker.network.messages.TableStateUpdateMessage;
 import org.innopolis.mammba.poker.network.messages.data.TableStateData;
-import org.innopolis.mammba.poker.engine.cards.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -16,6 +18,7 @@ public class User {
     private String nickname;
     private int money;
     private static Long userCounter = 0L;
+    private Spectator playerOrSpectator = null;
 
     /**
      * Default constructor for an anonymous user.
@@ -48,33 +51,72 @@ public class User {
     public void setMoney(int money) {
         this.money = money;
     }
-    public void updateData(Room room, Spectator sp) {
+    public void selectRoom(Room room) {
+        playerOrSpectator = room.addPlayerOrSpectator(this, room);
+    }
+
+    public void setPlayerOrSpectator(Spectator sp) {
+        playerOrSpectator = sp;
+    }
+
+    public Spectator getPlayerOrSpectator() {
+        return playerOrSpectator;
+    }
+
+    public void notifyUser(Room room, Spectator sp) {
         Game game = room.getGame();
+        Spectator player = sp;
         TableStateUpdateMessage tsum = new TableStateUpdateMessage();
         TableStateData tsd = new TableStateData();
 
-       /* String[] actions = game.getPossibleActions(sp);
-        Card[]   playerCards = (Card[])game.getMyCards(sp).toArray();
-        Card[]   tableCards = (Card[])game.getTableCards(sp).toArray();
+        // User-specific data
+        String[] actions = null;
+        Card[]   playerCards = null;
 
-        List<Player> pl = game.getPlayers();
-        TableStateData.Player[] players = new TableStateData.Player[pl.size()];
-        for(int i = 0; i < pl.size(); i++) {
-            Player p = pl.get(i);
-            players[i].setID(p.getUUID().toString());
-            players[i].setName(p.getNickname());
-            players[i].setStake(game.getStake(sp));
-            players[i].setTurn(game.isMyTurn(sp));
+        if(player != null) {
+            // Get player actions
+            List<PlayerAction> actionsList = player.getActions();
+            actions = new String[actionsList.size()];
+            for(int i = 0; i < actionsList.size(); i++) {
+                actions[i] = actionsList.get(i).toString();
+            }
+
+            // Get player cards
+            List<Card> playerCardsList = player.getCards();
+            playerCards = new Card[playerCardsList.size()];
+            for(int i = 0; i < playerCardsList.size(); i++) {
+                playerCards[i] = playerCardsList.get(i);
+            }
         }
 
+        // Common players' data
+        Card[] tableCards = null;
+        TableStateData.Player[] players = null;
+
+        // Get table cards
+        List<Card> tableCardsList = game.getTableCards();
+        tableCards = tableCardsList.toArray(new Card[tableCardsList.size()]);
+
+        // Get players info
+        List<Player> playersList = game.getPlayers();
+        players = new TableStateData.Player[playersList.size()];
+        for(int i = 0; i < playersList.size(); i++) {
+            Player p = playersList.get(i);
+            players[i].setID(p.getId());
+            players[i].setName(p.getNickname());
+            players[i].setStake(game.getPlayerStake(player));
+            players[i].setState(p.getState().toString());
+        }
+
+        // Fill data object
         tsd.setActionList(actions);
-        tsd.setOverallStakes(game.getOverallStakes());
+        tsd.setOverallStakes(game.getAllStakes());
         tsd.setPlayerCards(playerCards);
         tsd.setTableCards(tableCards);
-        tsd.setPlayers(players);*/
+        tsd.setPlayers(players);
+
 
         tsum.setData(tsd);
-
         client.sendEvent(MessageType.STATE_UPDATE, tsum);
     }
 }

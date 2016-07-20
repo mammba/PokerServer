@@ -7,7 +7,7 @@ public class TableStateData extends AbstractMessageData {
         super(MessageDataType.TABLE_STATE);
     }
 
-    // Public data (availible to every user)
+    // Public data (available to every user)
     private Card[]   tableCards;
     private int      overallStakes;
     private Player[] players;
@@ -19,21 +19,21 @@ public class TableStateData extends AbstractMessageData {
     public class Player {
         public Player() {}
         private String  name;
-        private String  id;
+        private int     id;
         private int     stake;
-        private boolean turn;
+        private String  state;
 
         // Getters
         public String  getName()  { return name; }
-        public String  getID()    { return id; }
+        public int     getID()    { return id; }
         public int     getStake() { return stake; }
-        public boolean getTurn()  { return turn; }
+        public String  getState() { return state; }
 
         // Setters
         public void setName(String name)  { this.name = name; }
-        public void setID(String id)      { this.id = id; }
+        public void setID(int id) { this.id = id; }
         public void setStake(int stake)   { this.stake = stake; }
-        public void setTurn(boolean turn) { this.turn = turn; }
+        public void setState(String state) { this.state = state; }
     }
 
     // Getters

@@ -2,7 +2,6 @@ package org.innopolis.mammba.poker.engine.player;
 
 import org.innopolis.mammba.poker.engine.*;
 import org.innopolis.mammba.poker.engine.errors.*;
-
 import org.innopolis.mammba.poker.engine.cards.Card;
 import org.innopolis.mammba.poker.engine.game.Game;
 import org.innopolis.mammba.poker.engine.game.GameState;
@@ -10,25 +9,20 @@ import org.innopolis.mammba.poker.engine.game.GameState;
 import java.util.LinkedList;
 import java.util.List;
 
-
-
 public class Player extends Spectator {
     private int id;
     private PlayerState state;
     private int _secret;
     private Game game;
-
     private static int idCounter = 0;
-
-
     List<Card> cards = new LinkedList<Card>();
 
     public User getUser(){
         return super.getUser();
     }
 
-    public Player(Room room, Game nGame, User user, int secret){
-        super(user, room);
+    public Player(Game nGame, User user, int secret){
+        super(user, nGame.getRoom());
         state = PlayerState.active;
         _secret = secret;
         id = ++idCounter;

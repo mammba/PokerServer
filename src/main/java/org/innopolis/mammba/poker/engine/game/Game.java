@@ -1,6 +1,7 @@
 package org.innopolis.mammba.poker.engine.game;
 
 
+import org.innopolis.mammba.poker.engine.Room;
 import org.innopolis.mammba.poker.engine.Spectator;
 import org.innopolis.mammba.poker.engine.cards.Card;
 import org.innopolis.mammba.poker.engine.cards.CardDeck;
@@ -29,9 +30,10 @@ public class Game {
     private Round currentRound;
     private int allStackes;
     private GameState state;
+    private Room room;
 
-
-    public Game(){
+    public Game(Room room){
+        this.room = room;
         cardsDeck = new CardDeck();
         openedCards = new LinkedList<Card>();
         rounds = new LinkedList<Round>();
@@ -40,13 +42,16 @@ public class Game {
         state = GameState.waitForStart;
     }
 
+    public Room getRoom() {
+        return room;
+    }
     public Player addPlayer(Spectator spectator){
         if(rounds.size() > 0 ){
             throw new GameInitError(GameInitErrorType.gameAlreadyStarted, "Game has already started");
         }else if(players.size() > 5){
             throw new GameInitError(GameInitErrorType.tooManyPlayers, "Game has already 5 players");
         }
-        Player player = new Player(spectator.getRoom(), this, spectator.getUser(), _secret);
+        Player player = new Player(this, spectator.getUser(), _secret);
         players.add(player);
         return player;
     }
@@ -211,6 +216,11 @@ public class Game {
         }else{
             return -1;
         }
+    }
+
+    public int getPlayerStake(Spectator player) {
+        // TODO: Remove this on merge and change argument to Spectator
+        return 0;
     }
 
 

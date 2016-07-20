@@ -3,23 +3,21 @@ package org.innopolis.mammba.poker.network;
 import com.corundumstudio.socketio.listener.*;
 import com.corundumstudio.socketio.*;
 import org.innopolis.mammba.poker.engine.*;
-import org.innopolis.mammba.poker.engine.cards.*;
 import org.innopolis.mammba.poker.network.messages.StateUpdateMessage;
-import org.innopolis.mammba.poker.network.messages.TableStateUpdateMessage;
-import org.innopolis.mammba.poker.network.messages.data.TableStateData;
-
+import java.util.logging.Logger;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.UUID;
 
 public class PokerServer {
+    private final static Logger LOG = Logger.getLogger("PokerServer");
     private SocketIOServer server;
     private HashMap<UUID, User> users = new HashMap<UUID, User>();
-    private List<Room> rooms = new LinkedList<Room>();
+    RoomManager roomManager = new RoomManager();
+
+
     public PokerServer(int port) {
         // For the basic version we'll use only one room
-        rooms.add(new Room());
+        roomManager.addRoom(new Room());
 
         Configuration config = new Configuration();
         config.getSocketConfig().setReuseAddress(true);
@@ -61,57 +59,50 @@ public class PokerServer {
      * Defines the client-server poker protocol.
      */
     private void addEventListeners() {
+        /**
+         * Handling requests:
+         * 1. create room:
+         *          Room m = new Room(...);
+         *          roomManager.addRoom(Room m);
+         *          user.selectRoom(m);
+         * 2. select room:
+         *          int id = ?; // Got from the request
+         *          Room m = roomManager.get(id);
+         *          user.selectRoom(Room m);
+         * 3. get spectator/player:
+         *          user.getPlayerOrSpectator()
+         * 4. get user's room:
+         *          user.getPlayerOrSpectator().getRoom()
+         * 5. get game:
+         *          user.getPlayerOrSpectator().getRoom().getGame()
+         */
         server.addConnectListener(new ConnectListener() {
             public void onConnect(SocketIOClient client) {
-                TableStateUpdateMessage tsum = new TableStateUpdateMessage();
-                TableStateData tsd = new TableStateData();
-
-               /* String[] actions = {"fold", "check"};
-                Card[]   playerCards = new Card[2];
-                playerCards[0] = new Card(Card.Suit.Hearts, Card.Rank.Ace);
-                playerCards[1] = new Card(Card.Suit.Diamonds, Card.Rank.Ace);
-
-                Card[]   tableCards = new Card[3];
-                tableCards[0] = new Card(Card.Suit.Spades, Card.Rank.Eight);
-                tableCards[1] = new Card(Card.Suit.Clubs, Card.Rank.Jack);
-                tableCards[2] = new Card(Card.Suit.Spades, Card.Rank.Nine);
-
-                TableStateData.Player[] players = new TableStateData.Player[2];
-                players[0] = tsd.new Player();
-                players[1] = tsd.new Player();
-
-                players[0].setID("id1");
-                players[0].setName("Mike");
-                players[0].setStake(100);
-                players[0].setTurn(true);
-
-                players[1].setID("id2");
-                players[1].setName("Bulat");
-                players[1].setStake(300);
-                players[1].setTurn(false);
-
-                tsd.setActionList(actions);
-                tsd.setOverallStakes(1000);
-                tsd.setPlayerCards(playerCards);
-                tsd.setTableCards(tableCards);
-                tsd.setPlayers(players);*/
-
-                tsum.setData(tsd);
-
-                client.sendEvent("su", tsum);
-
                 User pk = new User(client);
                 users.put(client.getSessionId(), pk);
-                // For the basic version we'll use only one room
-                rooms.get(0).addPlayer(new Player(pk, rooms.get(0)));
+                LOG.info("Client " + client.getSessionId().toString() + " connected");
+                boolean joinedTheRoom = false;
+                // If there is a not filled room, join it
+                for(Room room : roomManager.getRoomList()) {
+                    if(!room.isFull()) {
+                        pk.setPlayerOrSpectator(room.addPlayerOrSpectator(pk, room));
+                        joinedTheRoom = true;
+                        break;
+                    }
+                }
+
+                // Otherwise, create new room and join it
+                if (!joinedTheRoom) {
+                    Room room = new Room();
+                    pk.setPlayerOrSpectator(room.addPlayerOrSpectator(pk, room));
+                }
             }
         });
         server.addDisconnectListener(new DisconnectListener() {
             public void onDisconnect(SocketIOClient client) {
                 User user = getUserBySessionID(client.getSessionId());
-                // For the basic version we'll use only one room
-                // rooms.get(0).removeUser();
-                rooms.get(0).removeUser(user);
+                if (user.getPlayerOrSpectator() != null)
+                    user.getPlayerOrSpectator().getRoom().removeUser(user);
                 users.remove(client.getSessionId());
             }
         });
@@ -119,44 +110,7 @@ public class PokerServer {
         server.addEventListener("su", StateUpdateMessage.class, new DataListener<StateUpdateMessage>() {
             public void onData(SocketIOClient client, StateUpdateMessage data, AckRequest ackRequest) {
                 User user = getUserBySessionID(client.getSessionId());
-                // For 0.0.1 this will just call rooms.get(0).engine().* methods
-
-                TableStateUpdateMessage tsum = new TableStateUpdateMessage();
-                TableStateData tsd = new TableStateData();
-
-               /* String[] actions = {"fold", "check"};
-                Card[]   playerCards = new Card[2];
-                playerCards[0] = new Card(Card.Suit.Hearts, Card.Rank.Ace);
-                playerCards[1] = new Card(Card.Suit.Diamonds, Card.Rank.Ace);
-
-                Card[]   tableCards = new Card[3];
-                tableCards[0] = new Card(Card.Suit.Spades, Card.Rank.Eight);
-                tableCards[1] = new Card(Card.Suit.Clubs, Card.Rank.Jack);
-                tableCards[2] = new Card(Card.Suit.Spades, Card.Rank.Nine);
-
-                TableStateData.Player[] players = new TableStateData.Player[2];
-                players[0] = tsd.new Player();
-                players[1] = tsd.new Player();
-
-                players[0].setID("id1");
-                players[0].setName("Mike");
-                players[0].setStake(100);
-                players[0].setTurn(true);
-
-                players[1].setID("id2");
-                players[1].setName("Bulat");
-                players[1].setStake(300);
-                players[1].setTurn(false);
-
-                tsd.setActionList(actions);
-                tsd.setOverallStakes(1000);
-                tsd.setPlayerCards(playerCards);
-                tsd.setTableCards(tableCards);
-                tsd.setPlayers(players);
-
-                tsum.setData(tsd);*/
-
-                client.sendEvent("su", tsum);
+                System.out.println("got su"+user.getUUID().toString());
             }
         });
     }

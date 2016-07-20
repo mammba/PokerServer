@@ -1,36 +1,47 @@
 package org.innopolis.mammba.poker.engine;
 
 import org.innopolis.mammba.poker.engine.game.Game;
+import org.innopolis.mammba.poker.engine.game.GameState;
 
 import java.util.LinkedList;
 import java.util.List;
 
 public class Room {
     private static Long id = 0L;
+    private int maxNumber = 6;
+    private boolean useBots = false;
     private List<Spectator> users = new LinkedList<Spectator>();
-    private Game game = new Game();
+    private Game game = new Game(this);
     public Room() {
         id++;
+    }
+    public Room(int maxNumber, boolean useBots) {
+        id++;
+        this.maxNumber = maxNumber;
+        this.useBots = useBots;
+    }
+
+    /**
+     * Returns true if the room is full.
+     * @return boolean
+     */
+    public boolean isFull() {
+        return game.getPlayers().size() == maxNumber;
     }
 
     /**
      * Adds a spectator to a room.
-     * @param sp Spectator
+     * @param user User
+     * @param room Room
      */
-    public void addSpectator(Spectator sp) {
-        this.users.add(sp);
-    }
-
-    /**
-     * Adds a player to a room.
-     * @param sp Player
-     */
-    public void addPlayer(Player sp) {
-        this.users.add(sp);
-        game.addPlayer(sp);
-        // FIXME: this is only for minimum viable product v.0.0.1
-        if (users.size() == 2)
+    public Spectator addPlayerOrSpectator(User user, Room room) {
+        Spectator sp = new Spectator(user, room);
+        if(!isFull())
+            sp = game.addPlayer(sp);
+        else if (game.getState() == GameState.waitForStart)
             game.start();
+        this.users.add(sp);
+        return sp;
     }
 
     public void removeUser(User user) {
@@ -43,9 +54,9 @@ public class Room {
     public Game getGame() {
         return game;
     }
-    public void notifySpectators() {
+    public void notifyUsers() {
         for(Spectator sp:users) {
-            sp.notifySpectator();
+            sp.notifyUser();
         }
     }
 }
