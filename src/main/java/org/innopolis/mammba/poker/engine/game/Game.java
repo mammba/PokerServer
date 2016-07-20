@@ -16,13 +16,14 @@ import org.innopolis.mammba.poker.engine.player.PlayerState;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * Created by anton on 17/07/16.
  *
  */
 public class Game {
-    public  final static int MAX_NUMBER_OF_PLAYERS = 5;
+    private final static Logger LOG = Logger.getLogger("Game");
     private LinkedList<Player> players;
     private CardDeck cardsDeck;
     private LinkedList<Card> openedCards;
@@ -47,11 +48,13 @@ public class Game {
     public Player addPlayer(Spectator spectator){
         if(rounds.size() > 0 ){
             throw new GameInitError(GameInitErrorType.gameAlreadyStarted, "Game has already started");
-        }else if(players.size() > MAX_NUMBER_OF_PLAYERS){
+        }else if(players.size() > 5){
             throw new GameInitError(GameInitErrorType.tooManyPlayers, "Game has already 5 players");
         }
         Player player = new Player(spectator.getRoom(), this, spectator.getUser(), _secret);
         players.add(player);
+        LOG.info("Added player #" + player.getId());
+
         room.notifySpectators();
         return player;
     }
@@ -77,6 +80,7 @@ public class Game {
     };
 
     public void call(int playerId){
+        LOG.info("Player #" + playerId + ": call");
         Player currentPlayer = getPlayerById(playerId);
         checkMoveAbility(currentPlayer);
         currentRound.call(currentPlayer);
@@ -85,6 +89,7 @@ public class Game {
     }
 
     public void raise(int playerId, int amount){
+        LOG.info("Player #" + playerId + ": raise by " + amount);
         Player currentPlayer = getPlayerById(playerId);
         checkMoveAbility(currentPlayer);
         currentRound.raise(currentPlayer, amount);
@@ -93,6 +98,7 @@ public class Game {
     }
 
     public void pass(int playerId){
+        LOG.info("Player #" + playerId + ": pass");
         Player currentPlayer = getPlayerById(playerId);
         checkMoveAbility(currentPlayer);
         currentRound.pass(currentPlayer);
@@ -101,6 +107,7 @@ public class Game {
     }
 
     public void fold(int playerId){
+        LOG.info("Player #" + playerId + ": fold");
         Player currentPlayer = getPlayerById(playerId);
         checkMoveAbility(currentPlayer);
         currentRound.fold(currentPlayer);
@@ -122,6 +129,7 @@ public class Game {
             currentRound = newRound;
             state = GameState.started;
         }
+        LOG.info("Game started");
         room.notifySpectators();
     }
 
@@ -169,6 +177,7 @@ public class Game {
     }
 
     public int getPlayerStake(Player player) {
+        if(currentRound == null) return 0;
         return currentRound.getStakeByPlayer(player).getAmount();
     }
 

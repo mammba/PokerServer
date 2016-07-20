@@ -5,11 +5,13 @@ import org.innopolis.mammba.poker.engine.game.Game;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class Room {
+    private final static Logger LOG = Logger.getLogger("Game");
     private static int MAX_PLAYERS = 2;
     private static Long id = 0L;
-    private List<Spectator> users = new LinkedList<Spectator>();
+    private List<Spectator> spectators = new LinkedList<Spectator>();
     private Game game = new Game(this);
     public Room() {
         id++;
@@ -20,7 +22,7 @@ public class Room {
      * @param sp Spectator
      */
     public void addSpectator(Spectator sp) {
-        this.users.add(sp);
+        this.spectators.add(sp);
     }
 
     /**
@@ -31,19 +33,27 @@ public class Room {
         if(this.game.getPlayers().size() >= MAX_PLAYERS) {
             throw new InvalidStateError("Room is full");
         }
-
-        this.users.add(sp);
+        LOG.info("Add player " + sp.getUser().getUUID());
+        this.spectators.add(sp);
         game.addPlayer(sp);
-        // FIXME: this is only for minimum viable product v.0.0.1
-        if (users.size() == MAX_PLAYERS)
+        if (!hasPlace()) {
             game.start();
+        }
     }
 
     public void removeUser(User user) {
         if(user.getPlayer() != null) {
             user.getPlayer().fold();
         }
-        users.remove(user);
+        // FIXME Govnokod
+        if(user.getSpectator() != null) {
+            for(int i = 0; i < spectators.size(); i++) {
+                if(spectators.get(i).equals(user.getSpectator())) {
+                    spectators.remove(i);
+                }
+            }
+        }
+
     }
 
     public Game getGame() {
@@ -51,7 +61,8 @@ public class Room {
     }
 
     public void notifySpectators() {
-        for(Spectator sp:users) {
+        for(Spectator sp: spectators) {
+            LOG.info("Sending table state update to user " + sp.getUUID());
             sp.notifySpectator();
         }
     }

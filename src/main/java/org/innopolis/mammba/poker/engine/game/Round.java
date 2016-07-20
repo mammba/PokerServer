@@ -38,7 +38,7 @@ class Round {
 
     void call(Player player){
         int needToStake = stakeAmount - getStakeByPlayer(player).getAmount();
-        if(player.getUser().getBalance() > needToStake){
+        if(player.getUser().getBalance() >= needToStake){
             player.getUser().reduceBalance(needToStake);
             changeStakeAmount(player, needToStake);
             movesCounter++;

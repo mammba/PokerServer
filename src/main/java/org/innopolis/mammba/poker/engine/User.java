@@ -90,16 +90,24 @@ public class User {
         if(player != null) {
             // Get player actions
             List<PlayerAction> actionsList = player.getActions();
-            actions = new String[actionsList.size()];
-            for(int i = 0; i < actionsList.size(); i++) {
-                actions[i] = actionsList.get(i).toString();
+            if(actionsList == null) {
+                actions = new String[0];
+            } else {
+                actions = new String[actionsList.size()];
+                for (int i = 0; i < actionsList.size(); i++) {
+                    actions[i] = actionsList.get(i).toString();
+                }
             }
 
             // Get player cards
             List<Card> playerCardsList = player.getCards();
-            playerCards = new Card[playerCardsList.size()];
-            for(int i = 0; i < playerCardsList.size(); i++) {
-                playerCards[i] = playerCardsList.get(i);
+            if(playerCardsList == null) {
+                playerCards = new Card[0];
+            } else {
+                playerCards = new Card[playerCardsList.size()];
+                for (int i = 0; i < playerCardsList.size(); i++) {
+                    playerCards[i] = playerCardsList.get(i);
+                }
             }
         }
 
@@ -109,17 +117,26 @@ public class User {
 
         // Get table cards
         List<Card> tableCardsList = game.getTableCards();
-        tableCards = tableCardsList.toArray(new Card[tableCardsList.size()]);
+        if(tableCardsList == null) {
+            tableCards = new Card[0];
+        } else {
+            tableCards = tableCardsList.toArray(new Card[tableCardsList.size()]);
+        }
 
         // Get players info
         List<Player> playersList = game.getPlayers();
-        players = new TableStateData.Player[playersList.size()];
-        for(int i = 0; i < playersList.size(); i++) {
-            Player p = playersList.get(i);
-            players[i].setID(p.getId());
-            players[i].setName(p.getNickname());
-            players[i].setStake(game.getPlayerStake(player));
-            players[i].setState(p.getState().toString());
+        if(playersList == null) {
+            players = new TableStateData.Player[0];
+        } else {
+            players = new TableStateData.Player[playersList.size()];
+            for (int i = 0; i < playersList.size(); i++) {
+                Player p = playersList.get(i);
+                players[i] = tsd.new Player();
+                players[i].setID(p.getId());
+                players[i].setName(p.getNickname());
+                players[i].setStake(game.getPlayerStake(p));
+                players[i].setState(p.getState().toString());
+            }
         }
 
         // Fill data object
@@ -129,8 +146,8 @@ public class User {
         tsd.setTableCards(tableCards);
         tsd.setPlayers(players);
 
-
         tsum.setData(tsd);
+
         client.sendEvent(MessageType.STATE_UPDATE, tsum);
     }
 }

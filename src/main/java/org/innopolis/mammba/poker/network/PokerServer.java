@@ -3,16 +3,10 @@ package org.innopolis.mammba.poker.network;
 import com.corundumstudio.socketio.listener.*;
 import com.corundumstudio.socketio.*;
 import org.innopolis.mammba.poker.engine.*;
-import org.innopolis.mammba.poker.engine.cards.*;
-import org.innopolis.mammba.poker.engine.errors.GameFlowError;
 import org.innopolis.mammba.poker.engine.errors.InvalidStateError;
-import org.innopolis.mammba.poker.engine.game.Game;
 import org.innopolis.mammba.poker.engine.player.Player;
 import org.innopolis.mammba.poker.network.messages.PlayerActionStateUpdateMessage;
-import org.innopolis.mammba.poker.network.messages.StateUpdateMessage;
-import org.innopolis.mammba.poker.network.messages.TableStateUpdateMessage;
 import org.innopolis.mammba.poker.network.messages.data.PlayerActionData;
-import org.innopolis.mammba.poker.network.messages.data.TableStateData;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -70,12 +64,17 @@ public class PokerServer {
         server.addConnectListener(new ConnectListener() {
             public void onConnect(SocketIOClient client) {
                 User pk = new User(client);
-                users.put(client.getSessionId(), pk);
+                // Set default money amount
+                pk.setMoney(1000);
+
                 LOG.info("Client " + client.getSessionId().toString() + " connected");
 
+                // Add user
+                users.put(client.getSessionId(), pk);
+
                 // If there is a room with free places, enter it
-                for(Room room : rooms) {
-                    if(room.hasPlace()) {
+                for (Room room : rooms) {
+                    if (room.hasPlace()) {
                         room.addPlayer(new Spectator(pk, room));
                         return;
                     }
@@ -83,8 +82,8 @@ public class PokerServer {
 
                 // Otherwise, create new room and enter it
                 Room room = new Room();
-                room.addPlayer(new Spectator(pk, room));
                 rooms.add(room);
+                room.addPlayer(new Spectator(pk, room));
             }
         });
 
@@ -104,14 +103,14 @@ public class PokerServer {
             }
         });
 
-        server.addEventListener("su", StateUpdateMessage.class, new DataListener<StateUpdateMessage>() {
-            public void onData(SocketIOClient client, StateUpdateMessage msg, AckRequest ackRequest) {
+        server.addEventListener("su", PlayerActionStateUpdateMessage.class, new DataListener<PlayerActionStateUpdateMessage>() {
+            public void onData(final SocketIOClient client, PlayerActionStateUpdateMessage msg, final AckRequest ackRequest) {
                 User user = getUserBySessionID(client.getSessionId());
                 Room room = user.getSpectator().getRoom();
                 String ackMessage = "OK";
 
                 LOG.info("Got StateUpdate of type " + msg.messageDataType().toString()
-                        + " from client " + client.getSessionId().toString() + " disconnected");
+                        + " from client " + client.getSessionId().toString());
 
                 // Check what concrete state update we got from client
                 try {
@@ -122,20 +121,18 @@ public class PokerServer {
                         default:
                             ackMessage = "Unknown method";
                     }
-                } catch (GameFlowError e) {
-                    LOG.warning("User " + user.getUUID() + " " + e.getMessage());
-                    ackMessage = e.getMessage();
-                } catch (InvalidStateError e) {
-                    LOG.warning("User " + user.getUUID() + " " + e.getMessage());
-                    ackMessage = e.getMessage();
-                } finally {
                     ackRequest.sendAckData(ackMessage);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } catch (Error e) {
+                    LOG.warning("User " + user.getUUID() + " " + e.toString());
+                    ackRequest.sendAckData(e.getMessage());
                 }
             }
         });
     }
 
-    private static void handlePlayerAction(User user, StateUpdateMessage msg) {
+    private static void handlePlayerAction(User user, PlayerActionStateUpdateMessage msg) {
         Room room = user.getSpectator().getRoom();
 
         if(room == null) {
@@ -146,7 +143,7 @@ public class PokerServer {
             throw new InvalidStateError("user is not assigned to player");
         }
 
-        PlayerActionData action = ((PlayerActionStateUpdateMessage) msg).getData();
+        PlayerActionData action = msg.getData();
         Player player = user.getPlayer();
 
         if(action.getAction().equals("call")) {
@@ -154,6 +151,8 @@ public class PokerServer {
         } else if(action.getAction().equals("raise")) {
             player.raise(action.getStake());
         } else if(action.getAction().equals("pass")) {
+            player.pass();
+        } else if(action.getAction().equals("check")) {
             player.pass();
         } else if(action.getAction().equals("fold")) {
             player.fold();
