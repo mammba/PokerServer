@@ -5,6 +5,7 @@ import com.corundumstudio.socketio.*;
 import org.innopolis.mammba.poker.engine.*;
 import org.innopolis.mammba.poker.engine.errors.InvalidStateError;
 import org.innopolis.mammba.poker.engine.player.Player;
+import org.innopolis.mammba.poker.network.messages.MessageType;
 import org.innopolis.mammba.poker.network.messages.PlayerActionStateUpdateMessage;
 import org.innopolis.mammba.poker.network.messages.data.PlayerActionData;
 
@@ -27,8 +28,8 @@ public class PokerServer {
         config.setPort(port);
         
         // CHECK
-        config.setOrigin("http://localhost");
-        config.setTransports(Transport.WEBSOCKET);
+        //  config.setOrigin("http://localhost");
+        //config.setTransports(Transport.WEBSOCKET);
 
         server = new SocketIOServer(config);
         addEventListeners();
@@ -108,7 +109,7 @@ public class PokerServer {
             }
         });
 
-        server.addEventListener("su", PlayerActionStateUpdateMessage.class, new DataListener<PlayerActionStateUpdateMessage>() {
+        server.addEventListener(MessageType.STATE_UPDATE, PlayerActionStateUpdateMessage.class, new DataListener<PlayerActionStateUpdateMessage>() {
             public void onData(final SocketIOClient client, PlayerActionStateUpdateMessage msg, final AckRequest ackRequest) {
                 User user = getUserBySessionID(client.getSessionId());
                 Room room = user.getSpectator().getRoom();
