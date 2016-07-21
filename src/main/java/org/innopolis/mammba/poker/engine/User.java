@@ -29,7 +29,7 @@ public class User {
     public User(SocketIOClient client) {
         this.client = client;
         this.uuid = client.getSessionId();
-        nickname = "User"+userCounter.toString();
+        nickname = "User "+userCounter.toString();
         userCounter++;
     }
 
@@ -106,9 +106,19 @@ public class User {
         // Common players' data
         String gameState                = game.getState().toString();
         int    overallStakes            = game.getAllStakes();
-        int    winnerID                 = -1;
+        int    roundMaxStake            = game.getCurrentRoundStakeAmount();
+        // TODO get these values from game
+        int    minStake                 = 2;
+        int    minCoeff                 = 2;
+
+        int[]  winnerIDs                = null;
         Card[] tableCards               = null;
         TableStateData.Player[] players = null;
+
+        // TODO remove this workaround by adding minStake support in game
+        if(roundMaxStake == 0) {
+            roundMaxStake = minStake;
+        }
 
         // Get table cards
         List<Card> tableCardsList = game.getTableCards();
@@ -137,22 +147,29 @@ public class User {
                             game.getMaxCombinationByPlayer(p)
                     );
                 }
+                if(p.equals(player)) {
+                    players[i].setBalance(player.getUser().getBalance());
+                }
             }
         }
 
         // Get winner
         if(game.getState() == GameState.finished) {
-            winnerID = game.getWinner().getId();
+            winnerIDs = new int[1];
+            winnerIDs[0] = game.getWinner().getId();
         }
 
         // Fill data object
         tsd.setTableCards(tableCards);
         tsd.setOverallStakes(overallStakes);
+        tsd.setRoundMaxStake(roundMaxStake);
+        tsd.setMinStake(minStake);
+        tsd.setMinCoeff(minCoeff);
         tsd.setPlayers(players);
         tsd.setGameState(gameState);
         tsd.setPlayerID(playerID);
         tsd.setActionList(actions);
-        tsd.setWinnerID(winnerID);
+        tsd.setWinnerIDs(winnerIDs);
 
         tsum.setData(tsd);
 

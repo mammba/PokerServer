@@ -86,8 +86,8 @@ public class Game {
         Player currentPlayer = getPlayerById(playerId);
         checkMoveAbility(currentPlayer);
         currentRound.call(currentPlayer);
-        room.notifySpectators();
         checkRoundState();
+        room.notifySpectators();
     }
 
     public void raise(int playerId, int amount){
@@ -181,6 +181,11 @@ public class Game {
     public int getPlayerStake(Player player) {
         if(currentRound == null) return 0;
         return currentRound.getStakeByPlayer(player).getAmount();
+    }
+
+    public int getCurrentRoundStakeAmount() {
+        if(currentRound == null) return 0;
+        return currentRound.getStakeAmount();
     }
 
     public List<Player> getPlayers(){
