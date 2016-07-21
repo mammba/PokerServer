@@ -1,6 +1,7 @@
 package org.innopolis.mammba.poker.network.messages.data;
 
 import org.innopolis.mammba.poker.engine.cards.*;
+import org.innopolis.mammba.poker.engine.combination.Combination;
 
 public class TableStateData extends AbstractMessageData {
     public TableStateData() {
@@ -15,6 +16,7 @@ public class TableStateData extends AbstractMessageData {
 
     // Private data (user-local)
     private int      playerID;
+    private int      winnerID;
     private String[] actionList;
 
     public class Player {
@@ -55,6 +57,7 @@ public class TableStateData extends AbstractMessageData {
     public int      getPlayerID()      { return playerID; }
     public String[] getActionList()    { return actionList; }
     public String   getGameState()     { return gameState; }
+    public int      getWinnerID()      { return winnerID; }
 
     // Setters
     public void setTableCards(Card[] tableCards)    { this.tableCards = tableCards; }
@@ -63,4 +66,5 @@ public class TableStateData extends AbstractMessageData {
     public void setPlayerID(int playerID)           { this.playerID = playerID; }
     public void setActionList(String[] actionList)  { this.actionList = actionList; }
     public void setGameState(String gameState)      { this.gameState = gameState; }
+    public void setWinnerID(int winnerID)           { this.winnerID = winnerID; }
 }
