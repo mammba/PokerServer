@@ -36,6 +36,7 @@ public class Room {
         LOG.info("Add player " + sp.getUser().getUUID());
         this.spectators.add(sp);
         game.addPlayer(sp);
+        game.addBot(sp);
         if (!hasPlace()) {
             game.start();
         }

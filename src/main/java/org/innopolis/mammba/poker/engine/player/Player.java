@@ -16,7 +16,7 @@ public class Player extends Spectator {
     private int         id;
     private PlayerState state;
     private int         _secret;
-    private Game        game;
+    protected Game        game;
     private boolean     shouldFold;
 
     private static int idCounter = 0;
@@ -141,7 +141,9 @@ public class Player extends Spectator {
     }
 
 
+    public void think() {
 
+    }
 }
 
 

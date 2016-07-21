@@ -2,6 +2,7 @@ package org.innopolis.mammba.poker.engine.game;
 
 import org.innopolis.mammba.poker.engine.errors.GameFlowError;
 import org.innopolis.mammba.poker.engine.errors.GameFlowErrorType;
+import org.innopolis.mammba.poker.engine.player.BotPlayer;
 import org.innopolis.mammba.poker.engine.player.Player;
 import org.innopolis.mammba.poker.engine.player.PlayerState;
 import org.innopolis.mammba.poker.engine.player.Player;
@@ -100,6 +101,9 @@ class Round {
                     if( (players.get(i).getState() == PlayerState.active) || (players.get(i).getState() == PlayerState.allIn)){
                         currentPlayer = players.get(i);
                         currentPlayer.changeStateToWaitToMove(_secret);
+                        if(currentPlayer instanceof BotPlayer){
+                            currentPlayer.think();
+                        }
                         break;
                     }
                 }else if(players.get(i).equals(oldCurrentPlayer)){
@@ -153,6 +157,9 @@ class Round {
             if(player.getState() != PlayerState.folded){
                 currentPlayer = player;
                 player.changeStateToWaitToMove(_secret);
+                if(player instanceof BotPlayer){
+                    player.think();
+                }
                 return;
             }
         }

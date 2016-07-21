@@ -27,8 +27,8 @@ public class PokerServer {
         config.setPort(port);
         
         // CHECK
-        config.setOrigin("http://localhost");
-        config.setTransports(Transport.WEBSOCKET);
+        //config.setOrigin("http://localhost");
+        //config.setTransports(Transport.WEBSOCKET);
 
         server = new SocketIOServer(config);
         addEventListeners();

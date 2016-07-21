@@ -3,7 +3,7 @@ package org.innopolis.mammba.poker.engine;
 import  java.util.UUID;
 
 public class Spectator {
-    private User user;
+    protected User user;
     private Room room;
 
     public Spectator(User user, Room room) {

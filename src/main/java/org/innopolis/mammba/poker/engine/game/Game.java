@@ -5,14 +5,14 @@ import org.innopolis.mammba.poker.engine.Room;
 import org.innopolis.mammba.poker.engine.Spectator;
 import org.innopolis.mammba.poker.engine.cards.Card;
 import org.innopolis.mammba.poker.engine.cards.CardDeck;
+import org.innopolis.mammba.poker.engine.combination.Combination;
+import org.innopolis.mammba.poker.engine.combination.CombinationsManager;
 import org.innopolis.mammba.poker.engine.errors.GameFlowError;
 import org.innopolis.mammba.poker.engine.errors.GameFlowErrorType;
 import org.innopolis.mammba.poker.engine.errors.GameInitError;
 import org.innopolis.mammba.poker.engine.errors.GameInitErrorType;
-import org.innopolis.mammba.poker.engine.player.Player;
-import org.innopolis.mammba.poker.engine.player.PlayerAction;
-import org.innopolis.mammba.poker.engine.player.PlayerActionsEnum;
-import org.innopolis.mammba.poker.engine.player.PlayerState;
+import org.innopolis.mammba.poker.engine.player.*;
+
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -52,6 +52,20 @@ public class Game {
             throw new GameInitError(GameInitErrorType.tooManyPlayers, "Game has already 5 players");
         }
         Player player = new Player(spectator.getRoom(), this, spectator.getUser(), _secret);
+        players.add(player);
+        LOG.info("Added player #" + player.getId());
+
+        room.notifySpectators();
+        return player;
+    }
+
+    public BotPlayer addBot(Spectator spectator){
+        if(rounds.size() > 0 ){
+            throw new GameInitError(GameInitErrorType.gameAlreadyStarted, "Game has already started");
+        }else if(players.size() > 5){
+            throw new GameInitError(GameInitErrorType.tooManyPlayers, "Game has already 5 players");
+        }
+        BotPlayer player = new BotPlayer(spectator.getRoom(), this, spectator.getUser(), _secret);
         players.add(player);
         LOG.info("Added player #" + player.getId());
 
@@ -237,7 +251,37 @@ public class Game {
         }
     }
 
+    public Player getWinner(){
+        Combination maxCombination = null;
+        Player winner = null;
 
+        for(Player player : players){
+            if(player.getState() != PlayerState.folded){
+                if(winner == null){
+                    winner = player;
+                    maxCombination = getMaxCombinationByPlayer(player);
+                }else{
+                    Combination t = getMaxCombinationByPlayer(player);
+                    if(t.compareTo(maxCombination) > 0){
+                        maxCombination = t;
+                        winner = player;
+                    }
+                }
+            }
+        }
+        return winner;
+    }
+
+    public Combination getMaxCombinationByPlayer(Player player){
+
+        LinkedList<Card> table = new LinkedList<Card>(openedCards);
+
+        table.addLast(player.getCards().get(0));
+        table.addLast(player.getCards().get(1));
+
+        LinkedList<Combination> res = CombinationsManager.getCombinations(table.toArray(new Card[0]));
+        return res.getLast();
+    }
 
 
     /*public getGameState(){
