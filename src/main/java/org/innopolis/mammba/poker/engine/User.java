@@ -29,7 +29,7 @@ public class User {
     public User(SocketIOClient client) {
         this.client = client;
         this.uuid = client.getSessionId();
-        nickname = "Пользователь "+userCounter.toString();
+        nickname = "User"+userCounter.toString();
         userCounter++;
     }
 

@@ -10,7 +10,7 @@ import java.util.logging.Logger;
 
 public class Room {
     private final static Logger LOG = Logger.getLogger("Game");
-    private static int MAX_PLAYERS = 2;
+    private static int MAX_PLAYERS = 5;
     private static Long id = 0L;
     private List<Spectator> spectators = new LinkedList<Spectator>();
     private Game game = new Game(this);
