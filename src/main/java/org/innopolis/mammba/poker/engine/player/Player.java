@@ -33,7 +33,7 @@ public class Player extends Spectator {
         user.setPlayer(this);
         state = PlayerState.active;
         _secret = secret;
-        id = ++idCounter;
+        id = idCounter++;
         game = nGame;
     }
 
@@ -55,8 +55,8 @@ public class Player extends Spectator {
             throw new GameFlowError(GameFlowErrorType.gameFinished, "Game has finished");
         }
         checkMoveState();
-        game.pass(id);
         state = PlayerState.active;
+        game.pass(id);
     }
 
     public void raise(int stake){
@@ -67,8 +67,8 @@ public class Player extends Spectator {
         if(stake > super.getUser().getBalance()){
             throw new GameFlowError(GameFlowErrorType.noEnoughMoney, "Not enough money");
         }
-        game.raise(id, stake);
         state = PlayerState.active;
+        game.raise(id, stake);
     }
 
     public void fold(){
@@ -84,7 +84,7 @@ public class Player extends Spectator {
         }
     }
 
-    public void changeStateToWaitToMove(int secret){
+    public void changeStateToWaitToMove(int secret) {
         if(secret == _secret){
             state = PlayerState.waitForMove;
             if(shouldFold) {
@@ -94,7 +94,8 @@ public class Player extends Spectator {
             throw new Error("Invalid key");
         }
     }
-    public void changeStateToFolded(int secret){
+
+    public void changeStateToFolded(int secret) {
         if(secret == _secret){
             state = PlayerState.folded;
         }else{
