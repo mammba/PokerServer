@@ -2,6 +2,7 @@ package org.innopolis.mammba.poker.engine;
 
 import org.innopolis.mammba.poker.engine.errors.InvalidStateError;
 import org.innopolis.mammba.poker.engine.game.Game;
+import org.innopolis.mammba.poker.engine.game.GameState;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -30,9 +31,14 @@ public class Room {
      * @param sp Player
      */
     public void addPlayer(Spectator sp) {
+        if(this.game.getState() == GameState.finished) {
+            game = new Game(this);
+        }
+
         if(this.game.getPlayers().size() >= MAX_PLAYERS) {
             throw new InvalidStateError("Room is full");
         }
+
         LOG.info("Add player " + sp.getUser().getUUID());
         this.spectators.add(sp);
         game.addPlayer(sp);
@@ -68,6 +74,6 @@ public class Room {
     }
 
     public boolean hasPlace() {
-        return game.getPlayers().size() < MAX_PLAYERS;
+        return game.getPlayers().size() < MAX_PLAYERS && game.getState() == GameState.waitForStart;
     }
 }
