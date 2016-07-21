@@ -214,11 +214,7 @@ public class Game {
 
     private boolean isPassAvailable(Player player){
         int stake = currentRound.getStakeByPlayer(player).getAmount();
-        if(stake == currentRound.getStakeAmount()) {
-            return true;
-        }else{
-            return false;
-        }
+        return currentRound.getStakeAmount() == stake;
     }
 
     private int isCallAvailable(Player player){
@@ -261,13 +257,20 @@ public class Game {
     }
 
     public Combination getMaxCombinationByPlayer(Player player){
-
         LinkedList<Card> table = new LinkedList<Card>(openedCards);
 
-        table.addLast(player.getCards().get(0));
-        table.addLast(player.getCards().get(1));
+        for(Card playerCard : player.getCards()) {
+            table.addLast(playerCard);
+        }
 
-        LinkedList<Combination> res = CombinationsManager.getCombinations(table.toArray(new Card[0]));
+        LinkedList<Combination> res = CombinationsManager.getCombinations(
+                table.toArray(new Card[0])
+        );
+
+        if(res == null) {
+            return null;
+        }
+
         return res.getLast();
     }
 
