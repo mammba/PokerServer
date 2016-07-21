@@ -25,6 +25,7 @@ public class Combination implements Comparable<Combination>{
     public Card[] getCards(){
         return cards;
     }
+    public String getName()  { return type.toString(); }
 
     public String toString(){
         String res = "Combination - " + type.toString() + "\n";
