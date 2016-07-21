@@ -5,6 +5,8 @@ import org.innopolis.mammba.poker.engine.Room;
 import org.innopolis.mammba.poker.engine.Spectator;
 import org.innopolis.mammba.poker.engine.cards.Card;
 import org.innopolis.mammba.poker.engine.cards.CardDeck;
+import org.innopolis.mammba.poker.engine.combination.Combination;
+import org.innopolis.mammba.poker.engine.combination.CombinationsManager;
 import org.innopolis.mammba.poker.engine.errors.GameFlowError;
 import org.innopolis.mammba.poker.engine.errors.GameFlowErrorType;
 import org.innopolis.mammba.poker.engine.errors.GameInitError;
@@ -237,7 +239,37 @@ public class Game {
         }
     }
 
+    public Player getWinner(){
+        Combination maxCombination = null;
+        Player winner = null;
 
+        for(Player player : players){
+            if(player.getState() != PlayerState.folded){
+                if(winner == null){
+                    winner = player;
+                    maxCombination = getMaxCombinationByPlayer(player);
+                }else{
+                    Combination t = getMaxCombinationByPlayer(player);
+                    if(t.compareTo(maxCombination) > 0){
+                        maxCombination = t;
+                        winner = player;
+                    }
+                }
+            }
+        }
+        return winner;
+    }
+
+    public Combination getMaxCombinationByPlayer(Player player){
+
+        LinkedList<Card> table = new LinkedList<Card>(openedCards);
+
+        table.addLast(player.getCards().get(0));
+        table.addLast(player.getCards().get(1));
+
+        LinkedList<Combination> res = CombinationsManager.getCombinations(table.toArray(new Card[0]));
+        return res.getLast();
+    }
 
 
     /*public getGameState(){
