@@ -5,6 +5,7 @@ import com.corundumstudio.socketio.*;
 import org.innopolis.mammba.poker.engine.*;
 import org.innopolis.mammba.poker.engine.errors.InvalidStateError;
 import org.innopolis.mammba.poker.engine.player.Player;
+import org.innopolis.mammba.poker.network.messages.ChatMessage;
 import org.innopolis.mammba.poker.network.messages.MessageType;
 import org.innopolis.mammba.poker.network.messages.PlayerActionStateUpdateMessage;
 import org.innopolis.mammba.poker.network.messages.data.PlayerActionData;
@@ -137,6 +138,18 @@ public class PokerServer {
                     LOG.warning("User " + user.getUUID() + " " + e.toString());
                     ackRequest.sendAckData(e.getMessage());
                 }
+            }
+        });
+
+        server.addEventListener(MessageType.CHAT_MESSAGE, ChatMessage.class, new DataListener<ChatMessage>() {
+            public void onData(SocketIOClient client, ChatMessage data, AckRequest ackRequest) {;
+                User user = getUserBySessionID(client.getSessionId());
+                data.setUserName(user.getNickname());
+
+                LOG.info("Got chat message from user " + user.getUUID());
+
+                // broadcast messages to all clients
+                server.getBroadcastOperations().sendEvent(MessageType.CHAT_MESSAGE, data);
             }
         });
     }
