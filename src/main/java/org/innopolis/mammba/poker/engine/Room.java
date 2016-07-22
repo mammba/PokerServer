@@ -68,7 +68,6 @@ public class Room {
 
     public void notifySpectators() {
         for(Spectator sp: spectators) {
-            LOG.info("Sending table state update to user " + sp.getUUID());
             sp.notifySpectator();
         }
     }

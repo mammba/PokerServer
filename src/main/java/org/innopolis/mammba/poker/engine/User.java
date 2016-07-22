@@ -12,8 +12,10 @@ import org.innopolis.mammba.poker.engine.cards.*;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.logging.Logger;
 
 public class User {
+    private final static Logger LOG = Logger.getLogger("User");
     private UUID           uuid;
     private SocketIOClient client;
     private boolean        isConnected = false;
@@ -181,6 +183,7 @@ public class User {
         tsum.setData(tsd);
 
         client.sendEvent(MessageType.STATE_UPDATE, tsum);
+        LOG.info("Sent table state update to user " + sp.getUUID());
     }
 
     private Card[] getPlayerCards(Player player) {
