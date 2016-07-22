@@ -33,7 +33,7 @@ public class Player extends Spectator {
         user.setPlayer(this);
         state = PlayerState.active;
         _secret = secret;
-        id = idCounter++;
+        id = user.getId();
         game = nGame;
     }
 

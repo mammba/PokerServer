@@ -17,13 +17,14 @@ import java.util.logging.Logger;
 public class User {
     private final static Logger LOG = Logger.getLogger("User");
     private UUID           uuid;
+    private int            id;
     private SocketIOClient client;
     private boolean        isConnected = false;
     private String         nickname;
     private int            money;
     private Spectator      spectator;
     private Player         player;
-    private static Long    userCounter = 0L;
+    private static int     userCounter;
 
     /**
      * Default constructor for an anonymous user.
@@ -32,8 +33,8 @@ public class User {
     public User(SocketIOClient client) {
         this.client = client;
         this.uuid = client.getSessionId();
-        nickname = "User "+userCounter.toString();
-        userCounter++;
+        nickname = "User "+Integer.toString(userCounter);
+        id = userCounter++;
     }
 
     public String getNickname() {
@@ -60,6 +61,9 @@ public class User {
         return uuid;
     }
 
+    public int getId() {
+        return id;
+    }
 
     /**
      * We need setters in order to convert JSON to objects via reflection
