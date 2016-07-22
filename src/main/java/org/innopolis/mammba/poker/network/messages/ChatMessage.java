@@ -4,6 +4,10 @@ public class ChatMessage {
     private String userName;
     private String message;
 
+    public ChatMessage() {
+
+    }
+
     public ChatMessage(String userName, String message) {
         super();
         this.userName = userName;
