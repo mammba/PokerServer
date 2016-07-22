@@ -282,6 +282,29 @@ public class Game {
         LinkedList<Combination> res = CombinationsManager.getCombinations(table.toArray(new Card[0]));
         return res.getLast();
     }
+    public LinkedList<Player> getWinners(){
+        Combination maxCombination = null;
+        LinkedList<Player> winners = new LinkedList<Player>();
+
+        for(Player player : players){
+            if(player.getState() != PlayerState.folded){
+                if(winners.size() == 0){
+                    winners.addLast(player);
+                    maxCombination = getMaxCombinationByPlayer(player);
+                }else{
+                    Combination t = getMaxCombinationByPlayer(player);
+                    if(t.compareTo(maxCombination) > 0){
+                        maxCombination = t;
+                        winners.clear();
+                        winners.addLast(player);
+                    }else if(t.compareTo(maxCombination) == 0){
+                        winners.addLast(player);
+                    }
+                }
+            }
+        }
+        return winners;
+    }
 
 
     /*public getGameState(){
