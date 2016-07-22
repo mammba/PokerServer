@@ -57,10 +57,15 @@ class Round {
     }
 
     void raise(Player player, int amount){
-        stakeAmount += amount;
-        changeStakeAmount(player, amount);
-        movesCounter++;
-        moveTurnToNextPlayer(player);
+        if(player.getUser().getBalance() >= amount) {
+            stakeAmount += amount;
+            changeStakeAmount(player, amount);
+            player.getUser().reduceBalance(amount);
+            movesCounter++;
+            moveTurnToNextPlayer(player);
+        } else {
+            throw new GameFlowError(GameFlowErrorType.incorrectAction, "Incorrect stake amount");
+        }
     }
 
     void fold (Player player){
@@ -96,7 +101,7 @@ class Round {
             boolean flag = false;
             for(int i = 0; i < players.size(); i++){
                 Player player = players.get(i);
-                if(player.isShouldFold()) {
+                if(player.isShouldFold() && player.getState() != PlayerState.folded) {
                     player.changeStateToFolded(_secret);
                 }
                 if(flag){

@@ -124,13 +124,7 @@ public class PokerServer {
 
                 // Check what concrete state update we got from client
                 try {
-                    switch (msg.messageDataType()) {
-                        case PLAYER_ACTION:
-                            handlePlayerAction(user, msg);
-                            break;
-                        default:
-                            ackMessage = "Unknown method";
-                    }
+                    handlePlayerAction(user, msg);
                     ackRequest.sendAckData(ackMessage);
                 } catch (Exception e) {
                     e.printStackTrace();

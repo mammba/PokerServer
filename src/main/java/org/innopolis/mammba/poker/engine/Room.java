@@ -51,7 +51,7 @@ public class Room {
         if(user.getPlayer() != null) {
             user.getPlayer().fold();
         }
-        // FIXME Govnokod
+
         if(user.getSpectator() != null) {
             for(int i = 0; i < spectators.size(); i++) {
                 if(spectators.get(i).equals(user.getSpectator())) {
