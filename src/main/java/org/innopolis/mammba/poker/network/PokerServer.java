@@ -70,6 +70,8 @@ public class PokerServer {
         server.addConnectListener(new ConnectListener() {
             public void onConnect(SocketIOClient client) {
                 User pk = new User(client);
+                pk.setConnected(true);
+
                 // Set default money amount
                 pk.setMoney(1000);
 
@@ -96,6 +98,7 @@ public class PokerServer {
         server.addDisconnectListener(new DisconnectListener() {
             public void onDisconnect(SocketIOClient client) {
                 User user = getUserBySessionID(client.getSessionId());
+                user.setConnected(false);
 
                 LOG.info("Client " + client.getSessionId().toString() + " disconnected");
 

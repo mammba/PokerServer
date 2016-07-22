@@ -16,6 +16,7 @@ import java.util.UUID;
 public class User {
     private UUID           uuid;
     private SocketIOClient client;
+    private boolean        isConnected = false;
     private String         nickname;
     private int            money;
     private Spectator      spectator;
@@ -78,7 +79,13 @@ public class User {
         this.money = money;
     }
 
+    public void setConnected(boolean isConnected) {
+        this.isConnected = isConnected;
+    }
+
     public void updateData(Room room, Spectator sp) {
+        if(!isConnected) return;
+
         Game game = room.getGame();
         Player player = sp.getUser().getPlayer();
         TableStateUpdateMessage tsum = new TableStateUpdateMessage();
