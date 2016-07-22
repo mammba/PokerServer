@@ -124,6 +124,10 @@ public class Game {
             for(Player player : players){
                 if(player.getState() == PlayerState.active){
                     player.setCards(cardsDeck.getCard(), cardsDeck.getCard(), _secret);
+                    // Disable players who disconnected before game start
+                    if(player.isShouldFold()) {
+                        player.changeStateToFolded(_secret);
+                   }
                 }
             }
             Round newRound = new Round(players, this, _secret);

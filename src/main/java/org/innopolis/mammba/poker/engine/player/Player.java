@@ -84,12 +84,13 @@ public class Player extends Spectator {
         }
     }
 
+    public boolean isShouldFold() {
+        return shouldFold;
+    }
+
     public void changeStateToWaitToMove(int secret) {
         if(secret == _secret){
             state = PlayerState.waitForMove;
-            if(shouldFold) {
-                fold();
-            }
         }else{
             throw new Error("Invalid key");
         }

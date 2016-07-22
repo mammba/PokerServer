@@ -4,7 +4,6 @@ import org.innopolis.mammba.poker.engine.errors.GameFlowError;
 import org.innopolis.mammba.poker.engine.errors.GameFlowErrorType;
 import org.innopolis.mammba.poker.engine.player.Player;
 import org.innopolis.mammba.poker.engine.player.PlayerState;
-import org.innopolis.mammba.poker.engine.player.Player;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -96,13 +95,17 @@ class Round {
         }else{
             boolean flag = false;
             for(int i = 0; i < players.size(); i++){
+                Player player = players.get(i);
+                if(player.isShouldFold()) {
+                    player.changeStateToFolded(_secret);
+                }
                 if(flag){
-                    if( (players.get(i).getState() == PlayerState.active) || (players.get(i).getState() == PlayerState.allIn)){
-                        currentPlayer = players.get(i);
+                    if( (player.getState() == PlayerState.active) || (player.getState() == PlayerState.allIn)){
+                        currentPlayer = player;
                         currentPlayer.changeStateToWaitToMove(_secret);
                         break;
                     }
-                }else if(players.get(i).equals(oldCurrentPlayer)){
+                }else if(player.equals(oldCurrentPlayer)){
                     flag = true;
                 }
                 if(i == (players.size() - 1)) i = 0;
